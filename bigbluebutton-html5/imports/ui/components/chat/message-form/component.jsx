@@ -141,6 +141,7 @@ class MessageForm extends Component {
         onSubmit={this.handleSubmit}
       >
         <div className={styles.wrapper}>
+{/*
           <TextareaAutosize
             className={styles.input}
             id="message-input"
@@ -158,6 +159,7 @@ class MessageForm extends Component {
             onChange={this.handleMessageChange}
             onKeyDown={this.handleMessageKeyDown}
           />
+*/}
           <Button
             hideLabel
             circle
