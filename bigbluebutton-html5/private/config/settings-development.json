@@ -15,7 +15,7 @@
       "copyright": "©2018 myTutor",
       "html5ClientBuild": "HTML5_TUTOR_VERSION",
       "lockOnJoin": true,
-      "basename": "/tutorhub",
+      "basename": "/html5client",
       "askForFeedbackOnLogout": false,
       "defaultSettings": {
         "application": {
