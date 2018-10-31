@@ -80,7 +80,7 @@ const reduceAndMapMessages = messages =>
 
 const getPublicMessages = () => {
   const publicMessages = Chats.find({
-    type: { $in: [PUBLIC_CHAT_TYPE, SYSTEM_CHAT_TYPE] },
+    type: { $in: [PUBLIC_CHAT_TYPE] },
   }, {
     sort: ['fromTime'],
   }).fetch();
