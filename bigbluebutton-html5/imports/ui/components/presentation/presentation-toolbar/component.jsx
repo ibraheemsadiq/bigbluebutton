@@ -224,7 +224,7 @@ class PresentationToolbar extends Component {
           label={'Fit to Width'}
           hideLabel={true}
         /> */}
-         Fit to screen button
+        {/* Fit to screen button
         <Button
           role="button"
           aria-labelledby="fitScreenLabel"
@@ -236,7 +236,7 @@ class PresentationToolbar extends Component {
           onClick={this.fitToScreenClickHandler}
           label={'Fit to Screen'}
           hideLabel={true}
-        />
+        /> */}
         {/* Zoom slider
         <div
           className={classNames(styles.zoomWrapper, { [styles.zoomWrapperNoBorder]: true })}
