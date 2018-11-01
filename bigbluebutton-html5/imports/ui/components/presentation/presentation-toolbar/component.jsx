@@ -211,7 +211,7 @@ class PresentationToolbar extends Component {
           className={styles.skipSlide}
         />
 
-         Fit to width button
+        {/* Fit to width button
         <Button
           role="button"
           aria-labelledby="fitWidthLabel"
@@ -223,7 +223,7 @@ class PresentationToolbar extends Component {
           onClick={this.fitToWidthClickHandler}
           label={'Fit to Width'}
           hideLabel={true}
-        />
+        /> */}
          Fit to screen button
         <Button
           role="button"
@@ -237,7 +237,7 @@ class PresentationToolbar extends Component {
           label={'Fit to Screen'}
           hideLabel={true}
         />
-         Zoom slider
+        {/* Zoom slider
         <div
           className={classNames(styles.zoomWrapper, { [styles.zoomWrapperNoBorder]: true })}
         >
@@ -259,7 +259,7 @@ class PresentationToolbar extends Component {
             className={styles.zoomSlider}
           />
           <div className={styles.zoomMinMax}> 400% </div>
-        </div>
+        </div> */}
       </div>
     );
   }
