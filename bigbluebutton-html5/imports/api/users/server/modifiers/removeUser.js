@@ -1,6 +1,7 @@
 import { check } from 'meteor/check';
 import Users from '/imports/api/users';
 import Logger from '/imports/startup/server/logger';
+import ejectUserFromVoice from '/imports/api/voice-users/server/methods/ejectUserFromVoice';
 
 const clearAllSessions = (sessionUserId) => {
   const serverSessions = Meteor.server.sessions;
@@ -35,6 +36,11 @@ export default function removeUser(meetingId, userId) {
 
     const sessionUserId = `${meetingId}-${userId}`;
     clearAllSessions(sessionUserId);
+
+    ejectUserFromVoice({
+      requesterUserId: userId,
+      meetingId,
+    }, userId);
 
     return Logger.info(`Removed user id=${userId} meeting=${meetingId}`);
   };

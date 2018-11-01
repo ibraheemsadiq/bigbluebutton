@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import { defineMessages, injectIntl } from 'react-intl';
 import { notify } from '/imports/ui/services/notification';
 import VisibilityEvent from '/imports/utils/visibilityEvent';
+import { fetchWebRTCMappedStunTurnServers } from '/imports/utils/fetchStunTurnServers';
+import ReconnectingWebSocket from 'reconnecting-websocket';
 import logger from '/imports/startup/client/logger';
 
 import VideoService from './service';
 import VideoList from './video-list/component';
-import { fetchWebRTCMappedStunTurnServers } from '/imports/utils/fetchStunTurnServers';
 
 const VIDEO_CONSTRAINTS = Meteor.settings.public.kurento.cameraConstraints;
 
@@ -114,7 +115,6 @@ class VideoProvider extends Component {
     this.videoTags = {};
     this.sharedWebcam = false;
 
-    this.openWs = this.ws.open.bind(this.ws);
     this.onWsOpen = this.onWsOpen.bind(this);
     this.onWsClose = this.onWsClose.bind(this);
     this.onWsMessage = this.onWsMessage.bind(this);
@@ -407,12 +407,11 @@ class VideoProvider extends Component {
         options.configuration.iceServers = iceServers;
       }
 
-      let WebRtcPeerObj;
+      let WebRtcPeerObj = window.kurentoUtils.WebRtcPeer.WebRtcPeerRecvonly;
+
       if (shareWebcam) {
         WebRtcPeerObj = window.kurentoUtils.WebRtcPeer.WebRtcPeerSendonly;
         this.shareWebcam();
-      } else {
-        WebRtcPeerObj = window.kurentoUtils.WebRtcPeer.WebRtcPeerRecvonly;
       }
 
       this.webRtcPeers[id] = new WebRtcPeerObj(options, (error) => {
@@ -464,15 +463,19 @@ class VideoProvider extends Component {
 
       if (this.props.userId === id) {
         this.notifyError(intl.formatMessage(intlClientErrors.sharingError));
-        this.stopWebRTCPeer(id);
+        this.unshareWebcam();
+        this.destroyWebRTCPeer(id);
       } else {
+        const tag = this.webRtcPeers[id].videoTag;
+
         this.stopWebRTCPeer(id);
         this.createWebRTCPeer(id, shareWebcam);
 
+        // We reattach the peer for a real video restart
+        this.attachVideoStream(id);
+
         // Increment reconnect interval
         this.restartTimer[id] = Math.min(2 * this.restartTimer[id], MAX_CAMERA_SHARE_FAILED_WAIT_TIME);
-
-        this.logger('info', `Reconnecting peer ${id} with timer`, this.restartTimer)
       }
     };
   }

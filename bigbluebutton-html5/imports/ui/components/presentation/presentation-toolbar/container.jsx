@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withTracker } from 'meteor/react-meteor-data';
+import PresentationService from '/imports/ui/components/presentation/service';
 import PresentationToolbarService from './service';
 import PresentationToolbar from './component';
+
 
 const PresentationToolbarContainer = (props) => {
   const {
@@ -10,38 +12,52 @@ const PresentationToolbarContainer = (props) => {
     userIsPresenter,
     numberOfSlides,
     actions,
+    zoom,
+    zoomChanger,
+    fitToWidthHandler,
   } = props;
 
   if (userIsPresenter) {
     // Only show controls if user is presenter
     return (
       <PresentationToolbar
-        currentSlideNum={currentSlideNum}
-        numberOfSlides={numberOfSlides}
-        actions={actions}
+        {...{
+          currentSlideNum,
+          numberOfSlides,
+          actions,
+          zoom,
+          zoomChanger,
+          fitToWidthHandler,
+        }}
       />
     );
   }
   return null;
 };
 
-export default withTracker(({ presentationId, userIsPresenter, currentSlideNum }) => {
-  const data = PresentationToolbarService.getSlideData(presentationId);
+export default withTracker((params) => {
+  const { podId, presentationId } = params;
+  const data = PresentationToolbarService.getSlideData(podId, presentationId);
 
   const {
     numberOfSlides,
   } = data;
 
   return {
-    userIsPresenter,
+    fitToWidthHandler: params.fitToWidthHandler,
+    userIsPresenter: PresentationService.isPresenter(podId),
     numberOfSlides,
+    zoom: params.zoom,
+    zoomChanger: params.zoomChanger,
     actions: {
       nextSlideHandler: () =>
-        PresentationToolbarService.nextSlide(currentSlideNum, numberOfSlides),
+        PresentationToolbarService.nextSlide(params.currentSlideNum, numberOfSlides, podId),
       previousSlideHandler: () =>
-        PresentationToolbarService.previousSlide(currentSlideNum, numberOfSlides),
-      skipToSlideHandler: event =>
-        PresentationToolbarService.skipToSlide(event),
+        PresentationToolbarService.previousSlide(params.currentSlideNum, podId),
+      skipToSlideHandler: requestedSlideNum =>
+        PresentationToolbarService.skipToSlide(requestedSlideNum, podId),
+      zoomSlideHandler: value =>
+        PresentationToolbarService.zoomSlide(params.currentSlideNum, podId, value),
     },
   };
 })(PresentationToolbarContainer);
@@ -49,6 +65,8 @@ export default withTracker(({ presentationId, userIsPresenter, currentSlideNum }
 PresentationToolbarContainer.propTypes = {
   // Number of current slide being displayed
   currentSlideNum: PropTypes.number.isRequired,
+  zoom: PropTypes.number.isRequired,
+  zoomChanger: PropTypes.func.isRequired,
 
   // Is the user a presenter
   userIsPresenter: PropTypes.bool.isRequired,

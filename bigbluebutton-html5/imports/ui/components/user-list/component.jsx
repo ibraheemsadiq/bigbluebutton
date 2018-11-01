@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { injectIntl } from 'react-intl';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router';
 import injectWbResizeEvent from '/imports/ui/components/presentation/resize-wrapper/component';
 import { styles } from './styles';
 import CustomLogo from './custom-logo/component';
@@ -27,8 +26,10 @@ const propTypes = {
   toggleVoice: PropTypes.func.isRequired,
   changeRole: PropTypes.func.isRequired,
   roving: PropTypes.func.isRequired,
+  getGroupChatPrivate: PropTypes.func.isRequired,
+  showBranding: PropTypes.bool.isRequired,
 };
-const SHOW_BRANDING = Meteor.settings.public.app.branding.displayBrandingArea;
+
 const defaultProps = {
   compact: false,
   isBreakoutRoom: false,
@@ -38,10 +39,6 @@ const defaultProps = {
 };
 
 class UserList extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const {
       intl,
@@ -62,15 +59,17 @@ class UserList extends Component {
       isPublicChat,
       roving,
       CustomLogoUrl,
+      getGroupChatPrivate,
       handleEmojiChange,
       getEmojiList,
       getEmoji,
+      showBranding,
     } = this.props;
 
     return (
       <div className={styles.userList}>
         {
-          SHOW_BRANDING
+          showBranding
           && !this.props.compact
           && CustomLogoUrl
           ? <CustomLogo CustomLogoUrl={CustomLogoUrl} /> : null
@@ -94,6 +93,7 @@ class UserList extends Component {
           isMeetingLocked,
           isPublicChat,
           roving,
+          getGroupChatPrivate,
           handleEmojiChange,
           getEmojiList,
           getEmoji,
@@ -108,4 +108,4 @@ class UserList extends Component {
 UserList.propTypes = propTypes;
 UserList.defaultProps = defaultProps;
 
-export default withRouter(injectWbResizeEvent(injectIntl(UserList)));
+export default injectWbResizeEvent(injectIntl(UserList));
