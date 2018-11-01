@@ -1,24 +1,24 @@
 @import "/imports/ui/stylesheets/variables/_all";
 
-.btn {
-  --icon-offset: -.4em;
-  --square-side-length: 1.56rem;
+$icon-offset: -.4em;
+$square-side-length: 1.56rem;
 
+.btn {
   flex: 0 0;
   margin-top: auto;
 
   cursor: pointer;
 
   span:first-child {
-    width: var(--square-side-length);
-    height: var(--square-side-length);
+    width: $square-side-length;
+    height: $square-side-length;
   }
 
 
   i {
-    color: var(--color-gray-dark) !important;
-    top: var(--icon-offset);
-    left: var(--icon-offset);
+    color: $color-gray-dark !important;
+    top: $icon-offset;
+    left: $icon-offset;
   }
 
   &:hover,
@@ -27,4 +27,5 @@
       background-color: transparent !important;
     }
   }
+
 }

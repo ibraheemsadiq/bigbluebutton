@@ -1,10 +1,9 @@
 import React from 'react';
+import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 import { defineMessages, injectIntl } from 'react-intl';
 import Auth from '/imports/ui/services/auth';
 import Button from '/imports/ui/components/button/component';
-import getFromUserSettings from '/imports/ui/services/users-settings';
-import { logoutRouteHandler } from '/imports/startup/client/auth';
 import Rating from './rating/component';
 import { styles } from './styles';
 
@@ -64,6 +63,9 @@ const propTypes = {
     formatMessage: PropTypes.func.isRequired,
   }).isRequired,
   code: PropTypes.string.isRequired,
+  router: PropTypes.shape({
+    push: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 class MeetingEnded extends React.PureComponent {
@@ -80,7 +82,7 @@ class MeetingEnded extends React.PureComponent {
     };
     this.setSelectedStar = this.setSelectedStar.bind(this);
     this.sendFeedback = this.sendFeedback.bind(this);
-    this.shouldShowFeedback = getFromUserSettings('askForFeedbackOnLogout', Meteor.settings.public.app.askForFeedbackOnLogout);
+    this.shouldShowFeedback = Meteor.settings.public.app.askForFeedbackOnLogout;
   }
   setSelectedStar(starNumber) {
     this.setState({
@@ -93,8 +95,12 @@ class MeetingEnded extends React.PureComponent {
       selected,
     } = this.state;
 
+    const {
+      router,
+    } = this.props;
+
     if (selected <= 0) {
-      logoutRouteHandler();
+      router.push('/logout');
       return;
     }
 
@@ -115,9 +121,7 @@ class MeetingEnded extends React.PureComponent {
     };
 
     fetch(url, options)
-      .finally(() => {
-        logoutRouteHandler();
-      });
+      .finally(() => router.push('/logout'));
   }
 
   render() {
@@ -168,4 +172,4 @@ class MeetingEnded extends React.PureComponent {
 
 MeetingEnded.propTypes = propTypes;
 
-export default injectIntl(MeetingEnded);
+export default injectIntl(withRouter(MeetingEnded));

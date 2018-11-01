@@ -5,18 +5,18 @@ import { throttle } from 'lodash';
 
 const Cursor = new Mongo.Collection(null);
 
-function updateCursor(meetingId, userId, payload) {
+function updateCursor(meetingId, userId, x = -1, y = -1) {
   const selector = {
     meetingId,
     userId,
-    whiteboardId: payload.whiteboardId,
   };
 
   const modifier = {
     $set: {
       userId,
       meetingId,
-      ...payload,
+      x,
+      y,
     },
   };
 
@@ -26,19 +26,22 @@ function updateCursor(meetingId, userId, payload) {
 CursorStreamer.on('message', ({ meetingId, cursors }) => {
   Object.keys(cursors).forEach(userId => {
     if (Auth.meetingID === meetingId && Auth.userID === userId) return;
-    updateCursor(meetingId, userId, cursors[userId]);
+    updateCursor(meetingId, userId, cursors[userId].x, cursors[userId].y);
   });
 });
 
 const throttledEmit = throttle(CursorStreamer.emit.bind(CursorStreamer), 30, { 'trailing': false });
 
-export function publishCursorUpdate(payload) {
+export function publishCursorUpdate(x, y) {
   throttledEmit('publish', {
 		credentials: Auth.credentials,
-		payload,
+		payload: {
+      xPercent: x,
+      yPercent: y,
+    },
 	});
 
-  return updateCursor(Auth.meetingID, Auth.userID, payload);
+  return updateCursor(Auth.meetingID, Auth.userID, x, y);
 }
 
 export default Cursor;

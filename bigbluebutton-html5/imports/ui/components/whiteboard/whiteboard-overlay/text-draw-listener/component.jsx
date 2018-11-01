@@ -348,8 +348,6 @@ export default class TextDrawListener extends Component {
 
   handleDrawText(startPoint, width, height, status, id, text) {
     const { normalizeFont, sendAnnotation } = this.props.actions;
-    const { whiteboardId, userId } = this.props;
-    const { color, textFontSize } = this.props.drawSettings;
 
     const annotation = {
       id,
@@ -358,24 +356,24 @@ export default class TextDrawListener extends Component {
       annotationInfo: {
         x: startPoint.x, // left corner
         y: startPoint.y, // left corner
-        fontColor: color,
-        calcedFontSize: normalizeFont(textFontSize), // fontsize
+        fontColor: this.props.drawSettings.color,
+        calcedFontSize: normalizeFont(this.props.drawSettings.textFontSize), // fontsize
         textBoxWidth: width, // width
         text,
         textBoxHeight: height, // height
         id,
-        whiteboardId,
+        whiteboardId: this.props.whiteboardId,
         status,
         fontSize: this.props.drawSettings.textFontSize,
         dataPoints: `${startPoint.x},${startPoint.y}`,
         type: 'text',
       },
-      wbId: whiteboardId,
-      userId,
+      wbId: this.props.whiteboardId,
+      userId: this.props.userId,
       position: 0,
     };
 
-    sendAnnotation(annotation, whiteboardId);
+    sendAnnotation(annotation);
   }
 
   discardAnnotation() {

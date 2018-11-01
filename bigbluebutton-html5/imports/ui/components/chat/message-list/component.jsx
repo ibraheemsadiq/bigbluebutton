@@ -39,7 +39,7 @@ class MessageList extends Component {
     const { scrollArea } = this;
 
     this.setState({
-      scrollArea: this.scrollArea,
+      scrollArea: this.scrollArea
     });
 
     this.scrollTo(this.props.scrollPosition);
@@ -60,7 +60,7 @@ class MessageList extends Component {
       partnerIsLoggedOut,
     } = this.props;
 
-    if (!this.state.scrollArea && nextState.scrollArea) return true;
+    if(!this.state.scrollArea && nextState.scrollArea) return true;
 
     const switchingCorrespondent = chatId !== nextProps.chatId;
     const hasNewUnreadMessages = hasUnreadMessages !== nextProps.hasUnreadMessages;
@@ -164,16 +164,14 @@ class MessageList extends Component {
   }
 
   render() {
-    const {
-      messages, intl, id, lastReadMessageTime, handleReadMessage,
-    } = this.props;
+    const { messages, intl } = this.props;
     const isEmpty = messages.length === 0;
     return (
       <div className={styles.messageListWrapper}>
         <div
           role="log"
           ref={(ref) => { if (ref != null) { this.scrollArea = ref; } }}
-          id={id}
+          id={this.props.id}
           className={styles.messageList}
           aria-live="polite"
           aria-atomic="false"
@@ -182,14 +180,14 @@ class MessageList extends Component {
         >
           {messages.map(message => (
             <MessageListItem
-              handleReadMessage={handleReadMessage}
+              handleReadMessage={this.props.handleReadMessage}
               className={styles.messageListItem}
               key={message.id}
               messages={message.content}
               user={message.sender}
               time={message.time}
-              chatAreaId={id}
-              lastReadMessageTime={lastReadMessageTime}
+              chatAreaId={this.props.id}
+              lastReadMessageTime={this.props.lastReadMessageTime}
               scrollArea={this.state.scrollArea}
             />
           ))}

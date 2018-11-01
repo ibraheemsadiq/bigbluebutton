@@ -2,16 +2,14 @@ import { check } from 'meteor/check';
 import Slides from '/imports/api/slides';
 import Logger from '/imports/startup/server/logger';
 
-export default function changeCurrentSlide(meetingId, podId, presentationId, slideId) {
+export default function changeCurrentSlide(meetingId, presentationId, slideId) {
   check(meetingId, String);
   check(presentationId, String);
   check(slideId, String);
-  check(podId, String);
 
   const oldCurrent = {
     selector: {
       meetingId,
-      podId,
       presentationId,
       current: true,
     },
@@ -30,7 +28,6 @@ export default function changeCurrentSlide(meetingId, podId, presentationId, sli
   const newCurrent = {
     selector: {
       meetingId,
-      podId,
       presentationId,
       id: slideId,
     },

@@ -19,9 +19,9 @@
 .icon {
   cursor: pointer;
   font-size: 1.35rem;
-  color: var(--color-gray-light);
+  color: $color-gray-light;
 }
 
 .checked {
-  color: var(--color-success);
+  color: $color-success;
 }

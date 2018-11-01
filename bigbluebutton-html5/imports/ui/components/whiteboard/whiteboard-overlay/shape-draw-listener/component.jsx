@@ -259,16 +259,14 @@ export default class ShapeDrawListener extends Component {
   // we use the same function for all of them
   handleDrawCommonAnnotation(startPoint, endPoint, status, id, shapeType) {
     const { normalizeThickness, sendAnnotation } = this.props.actions;
-    const { whiteboardId, userId } = this.props;
-    const { color, thickness } = this.props.drawSettings;
 
     const annotation = {
       id,
       status,
       annotationType: shapeType,
       annotationInfo: {
-        color,
-        thickness: normalizeThickness(thickness),
+        color: this.props.drawSettings.color,
+        thickness: normalizeThickness(this.props.drawSettings.thickness),
         points: [
           startPoint.x,
           startPoint.y,
@@ -276,16 +274,16 @@ export default class ShapeDrawListener extends Component {
           endPoint.y,
         ],
         id,
-        whiteboardId,
+        whiteboardId: this.props.whiteboardId,
         status,
         type: shapeType,
       },
-      wbId: whiteboardId,
-      userId,
+      wbId: this.props.whiteboardId,
+      userId: this.props.userId,
       position: 0,
     };
 
-    sendAnnotation(annotation, whiteboardId);
+    sendAnnotation(annotation);
   }
 
   discardAnnotation() {

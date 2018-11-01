@@ -12,8 +12,6 @@ import NotificationsBarContainer from '../notifications-bar/container';
 import AudioContainer from '../audio/container';
 import ChatAlertContainer from '../chat/alert/container';
 import { styles } from './styles';
-import UserListContainer from '../user-list/container';
-import ChatContainer from '../chat/container';
 
 const MOBILE_MEDIA = 'only screen and (max-width: 40em)';
 const USERLIST_COMPACT_WIDTH = 50;
@@ -44,8 +42,8 @@ const propTypes = {
   media: PropTypes.element,
   actionsbar: PropTypes.element,
   closedCaption: PropTypes.element,
-  userListIsOpen: PropTypes.bool.isRequired,
-  chatIsOpen: PropTypes.bool.isRequired,
+  userList: PropTypes.element,
+  chat: PropTypes.element,
   locale: PropTypes.string,
   intl: intlShape.isRequired,
 };
@@ -57,6 +55,8 @@ const defaultProps = {
   media: null,
   actionsbar: null,
   closedCaption: null,
+  userList: null,
+  chat: null,
   locale: 'en',
 };
 
@@ -141,19 +141,17 @@ class App extends Component {
   }
 
   renderUserList() {
-    const {
-      intl, chatIsOpen, userListIsOpen,
-    } = this.props;
-
+    const { intl, chatIsOpen } = this.props;
+    let { userList } = this.props;
     const { compactUserList } = this.state;
 
-    if (!userListIsOpen) return null;
+    if (!userList) return null;
 
     const userListStyle = {};
     userListStyle[styles.compact] = compactUserList;
-    // userList = React.cloneElement(userList, {
-    //   compact: compactUserList, // TODO 4767
-    // });
+    userList = React.cloneElement(userList, {
+      compact: compactUserList,
+    });
 
     return (
       <div
@@ -161,23 +159,23 @@ class App extends Component {
         aria-label={intl.formatMessage(intlMessages.userListLabel)}
         aria-hidden={chatIsOpen}
       >
-        <UserListContainer />
+        {userList}
       </div>
     );
   }
 
   renderUserListResizable() {
-    const { userListIsOpen } = this.props;
+    const { userList } = this.props;
 
     // Variables for resizing user-list.
-    const USERLIST_MIN_WIDTH_PX = 150;
+    const USERLIST_MIN_WIDTH_PX = 100;
     const USERLIST_MAX_WIDTH_PX = 240;
     const USERLIST_DEFAULT_WIDTH_RELATIVE = 18;
 
     // decide whether using pixel or percentage unit as a default width for userList
     const USERLIST_DEFAULT_WIDTH = (window.innerWidth * (USERLIST_DEFAULT_WIDTH_RELATIVE / 100.0)) < USERLIST_MAX_WIDTH_PX ? `${USERLIST_DEFAULT_WIDTH_RELATIVE}%` : USERLIST_MAX_WIDTH_PX;
 
-    if (!userListIsOpen) return null;
+    if (!userList) return null;
 
     const resizableEnableOptions = {
       top: false,
@@ -211,29 +209,32 @@ class App extends Component {
   }
 
   renderChat() {
-    const { intl, chatIsOpen } = this.props;
+    const { chat, intl } = this.props;
 
-    if (!chatIsOpen) return null;
+    if (!chat) return null;
 
     return (
       <section
         className={styles.chat}
         aria-label={intl.formatMessage(intlMessages.chatLabel)}
       >
-        <ChatContainer />
+        {chat}
       </section>
     );
   }
 
   renderChatResizable() {
-    const { chatIsOpen } = this.props;
+    const { chat } = this.props;
 
     // Variables for resizing chat.
-    const CHAT_MIN_WIDTH = '10%';
-    const CHAT_MAX_WIDTH = '25%';
-    const CHAT_DEFAULT_WIDTH = '15%';
+    const CHAT_MIN_WIDTH_PX = 180;
+    const CHAT_MAX_WIDTH_PX = 310;
+    const CHAT_DEFAULT_WIDTH_RELATIVE = 25;
 
-    if (!chatIsOpen) return null;
+    // decide whether using pixel or percentage unit as a default width for chat
+    const CHAT_DEFAULT_WIDTH = (window.innerWidth * (CHAT_DEFAULT_WIDTH_RELATIVE / 100.0)) < CHAT_MAX_WIDTH_PX ? `${CHAT_DEFAULT_WIDTH_RELATIVE}%` : CHAT_MAX_WIDTH_PX;
+
+    if (!chat) return null;
 
     const resizableEnableOptions = {
       top: false,
@@ -249,8 +250,8 @@ class App extends Component {
     return (
       <Resizable
         defaultSize={{ width: CHAT_DEFAULT_WIDTH }}
-        minWidth={CHAT_MIN_WIDTH}
-        maxWidth={CHAT_MAX_WIDTH}
+        minWidth={CHAT_MIN_WIDTH_PX}
+        maxWidth={CHAT_MAX_WIDTH_PX}
         ref={(node) => { this.resizableChat = node; }}
         className={styles.resizableChat}
         enable={resizableEnableOptions}
@@ -262,7 +263,7 @@ class App extends Component {
 
   renderMedia() {
     const {
-      media, intl, chatIsOpen, userListIsOpen,
+      media, intl, chatIsOpen, userlistIsOpen,
     } = this.props;
 
     if (!media) return null;
@@ -271,7 +272,7 @@ class App extends Component {
       <section
         className={styles.media}
         aria-label={intl.formatMessage(intlMessages.mediaLabel)}
-        aria-hidden={userListIsOpen || chatIsOpen}
+        aria-hidden={userlistIsOpen || chatIsOpen}
       >
         {media}
         {this.renderClosedCaption()}
@@ -281,7 +282,7 @@ class App extends Component {
 
   renderActionsBar() {
     const {
-      actionsbar, intl, userListIsOpen, chatIsOpen,
+      actionsbar, intl, userlistIsOpen, chatIsOpen,
     } = this.props;
 
     if (!actionsbar) return null;
@@ -290,7 +291,7 @@ class App extends Component {
       <section
         className={styles.actionsbar}
         aria-label={intl.formatMessage(intlMessages.actionsBarLabel)}
-        aria-hidden={userListIsOpen || chatIsOpen}
+        aria-hidden={userlistIsOpen || chatIsOpen}
       >
         {actionsbar}
       </section>
@@ -298,9 +299,7 @@ class App extends Component {
   }
 
   render() {
-    const {
-      userListIsOpen, customStyle, customStyleUrl,
-    } = this.props;
+    const { params, userlistIsOpen } = this.props;
     const { enableResize } = this.state;
 
     return (
@@ -313,16 +312,14 @@ class App extends Component {
             {this.renderActionsBar()}
           </div>
           {enableResize ? this.renderUserListResizable() : this.renderUserList()}
-          {userListIsOpen && enableResize ? <div className={styles.userlistPad} /> : null}
+          {userlistIsOpen && enableResize ? <div className={styles.userlistPad} /> : null}
           {enableResize ? this.renderChatResizable() : this.renderChat()}
           {this.renderSidebar()}
         </section>
         <ModalContainer />
         <AudioContainer />
         <ToastContainer />
-        <ChatAlertContainer />
-        { customStyleUrl ? <link rel="stylesheet" type="text/css" href={customStyleUrl} /> : null }
-        { customStyle ? <link rel="stylesheet" type="text/css" href={`data:text/css;charset=UTF-8,${encodeURIComponent(customStyle)}`} /> : null }
+        <ChatAlertContainer currentChatID={params.chatID} />
       </main>
     );
   }

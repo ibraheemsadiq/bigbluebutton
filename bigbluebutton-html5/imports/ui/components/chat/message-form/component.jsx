@@ -129,6 +129,7 @@ class MessageForm extends Component {
   render() {
     const {
       intl, chatTitle, chatName, disabled,
+      minMessageLength, maxMessageLength,
     } = this.props;
 
     const { hasErrors, error } = this.state;

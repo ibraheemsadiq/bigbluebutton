@@ -1,7 +1,6 @@
+import Chats from '/imports/api/chat';
 import Users from '/imports/api/users';
 import Meetings from '/imports/api/meetings';
-import GroupChatMsg from '/imports/api/group-chat-msg';
-import GroupChat from '/imports/api/group-chat';
 import Auth from '/imports/ui/services/auth';
 import UnreadMessages from '/imports/ui/services/unread-messages';
 import Storage from '/imports/ui/services/storage/session';
@@ -13,11 +12,11 @@ const CHAT_CONFIG = Meteor.settings.public.chat;
 const GROUPING_MESSAGES_WINDOW = CHAT_CONFIG.grouping_messages_window;
 
 const SYSTEM_CHAT_TYPE = CHAT_CONFIG.type_system;
+const PUBLIC_CHAT_TYPE = CHAT_CONFIG.type_public;
 
 const PUBLIC_CHAT_ID = CHAT_CONFIG.public_id;
-const PUBLIC_GROUP_CHAT_ID = CHAT_CONFIG.public_group_id;
-const PRIVATE_CHAT_TYPE = CHAT_CONFIG.type_private;
-const PUBLIC_CHAT_USER_ID = CHAT_CONFIG.system_userid;
+const PUBLIC_CHAT_USERID = CHAT_CONFIG.public_userid;
+const PUBLIC_CHAT_USERNAME = CHAT_CONFIG.public_username;
 
 const ScrollCollection = new Mongo.Collection(null);
 
@@ -34,40 +33,41 @@ const getUser = (userId) => {
   return mapUser(user);
 };
 
-const getMeeting = () => Meetings.findOne({});
-
-const mapGroupMessage = (message) => {
+const mapMessage = (message) => {
   const mappedMessage = {
     id: message._id,
     content: message.content,
-    time: message.timestamp,
+    time: message.fromTime, // + message.from_tz_offset,
     sender: null,
   };
 
-  if (message.sender !== SYSTEM_CHAT_TYPE) {
-    mappedMessage.sender = getUser(message.sender);
+  if (message.type !== SYSTEM_CHAT_TYPE) {
+    mappedMessage.sender = getUser(message.fromUserId);
   }
 
   return mappedMessage;
 };
 
-const reduceGroupMessages = (previous, current) => {
+const reduceMessages = (previous, current) => {
   const lastMessage = previous[previous.length - 1];
   const currentMessage = current;
+
   currentMessage.content = [{
-    id: current.id,
+    id: current._id,
     text: current.message,
-    time: current.timestamp,
+    time: current.fromTime,
   }];
-  if (!lastMessage || !currentMessage.chatId === PUBLIC_GROUP_CHAT_ID) {
+
+  if (!lastMessage || !currentMessage.type === SYSTEM_CHAT_TYPE) {
     return previous.concat(currentMessage);
   }
+
   // Check if the last message is from the same user and time discrepancy
   // between the two messages exceeds window and then group current message
   // with the last one
   const timeOfLastMessage = lastMessage.content[lastMessage.content.length - 1].time;
-  if (lastMessage.sender === currentMessage.sender
-    && (currentMessage.timestamp - timeOfLastMessage) <= GROUPING_MESSAGES_WINDOW) {
+  if (lastMessage.fromUserId === currentMessage.fromUserId
+    && (currentMessage.fromTime - timeOfLastMessage) <= GROUPING_MESSAGES_WINDOW) {
     lastMessage.content.push(currentMessage.content.pop());
     return previous;
   }
@@ -75,43 +75,30 @@ const reduceGroupMessages = (previous, current) => {
   return previous.concat(currentMessage);
 };
 
-const reduceAndMapGroupMessages = messages =>
-  (messages.reduce(reduceGroupMessages, []).map(mapGroupMessage));
+const reduceAndMapMessages = messages =>
+  (messages.reduce(reduceMessages, []).map(mapMessage));
 
-const getPublicGroupMessages = () => {
-  const publicGroupMessages = GroupChatMsg.find({
-    chatId: PUBLIC_GROUP_CHAT_ID,
+const getPublicMessages = () => {
+  const publicMessages = Chats.find({
+    type: { $in: [PUBLIC_CHAT_TYPE] },
   }, {
-    sort: ['timestamp'],
+    sort: ['fromTime'],
   }).fetch();
 
-  return publicGroupMessages;
+  return publicMessages;
 };
 
-const getPrivateGroupMessages = () => {
-  const chatID = Session.get('idChatOpen');
-  const sender = getUser(Auth.userID);
-
-  const privateChat = GroupChat.findOne({
-    users: { $all: [chatID, sender.id] },
-    access: PRIVATE_CHAT_TYPE,
-  });
-
-  let messages = [];
-
-  if (privateChat) {
-    const {
-      chatId,
-    } = privateChat;
-
-    messages = GroupChatMsg.find({
-      chatId,
-    }, {
-      sort: ['timestamp'],
-    }).fetch();
-  }
-
-  return reduceAndMapGroupMessages(messages, []);
+const getPrivateMessages = (userID) => {
+  const messages = Chats.find({
+    toUsername: { $ne: PUBLIC_CHAT_USERNAME },
+    $or: [
+      { toUserId: userID },
+      { fromUserId: userID },
+    ],
+  }, {
+    sort: ['fromTime'],
+  }).fetch();
+  return reduceAndMapMessages(messages);
 };
 
 const isChatLocked = (receiverID) => {
@@ -133,45 +120,37 @@ const isChatLocked = (receiverID) => {
 
 const hasUnreadMessages = (receiverID) => {
   const isPublic = receiverID === PUBLIC_CHAT_ID;
-  const chatType = isPublic ? PUBLIC_GROUP_CHAT_ID : receiverID;
+  const chatType = isPublic ? PUBLIC_CHAT_USERID : receiverID;
   return UnreadMessages.count(chatType) > 0;
 };
 
 const lastReadMessageTime = (receiverID) => {
   const isPublic = receiverID === PUBLIC_CHAT_ID;
-  const chatType = isPublic ? PUBLIC_GROUP_CHAT_ID : receiverID;
+  const chatType = isPublic ? PUBLIC_CHAT_USERID : receiverID;
 
   return UnreadMessages.get(chatType);
 };
 
-const sendGroupMessage = (message) => {
-  const chatID = Session.get('idChatOpen');
-  const isPublicChat = chatID === PUBLIC_CHAT_ID;
-
-  let chatId = PUBLIC_GROUP_CHAT_ID;
+const sendMessage = (receiverID, message) => {
+  const isPublic = receiverID === PUBLIC_CHAT_ID;
 
   const sender = getUser(Auth.userID);
+  const receiver = !isPublic ? getUser(receiverID) : {
+    id: PUBLIC_CHAT_USERID,
+    name: PUBLIC_CHAT_USERNAME,
+  };
 
-  const receiver = !isPublicChat ? getUser(chatID) : { id: chatID };
-
-  if (!isPublicChat) {
-    const privateChat = GroupChat.findOne({ users: { $all: [chatID, sender.id] } });
-
-    if (privateChat) {
-      const { chatId: privateChatId } = privateChat;
-
-      chatId = privateChatId;
-    }
-  }
-
-  const payload = {
-    color: '0',
-    correlationId: `${sender.id}-${Date.now()}`,
-    sender: {
-      id: sender.id,
-      name: sender.name,
-    },
+  /* FIX: Why we need all this payload to send a message?
+   * The server only really needs the message, from_userid, to_userid and from_lang
+   */
+  const messagePayload = {
     message,
+    fromUserId: sender.id,
+    fromUsername: sender.name,
+    fromTimezoneOffset: (new Date()).getTimezoneOffset(),
+    toUsername: receiver.name,
+    toUserId: receiver.id,
+    fromColor: 0,
   };
 
   const currentClosedChats = Storage.getItem(CLOSED_CHAT_LIST_KEY);
@@ -181,7 +160,7 @@ const sendGroupMessage = (message) => {
     Storage.setItem(CLOSED_CHAT_LIST_KEY, _.without(currentClosedChats, receiver.id));
   }
 
-  return makeCall('sendGroupChatMsg', chatId, payload);
+  return makeCall('sendChat', messagePayload);
 };
 
 const getScrollPosition = (receiverID) => {
@@ -190,22 +169,20 @@ const getScrollPosition = (receiverID) => {
 };
 
 const updateScrollPosition =
-  position => ScrollCollection.upsert(
-    { receiver: Session.get('idChatOpen') },
+  (receiverID, position) => ScrollCollection.upsert(
+    { receiver: receiverID },
     { $set: { position } },
   );
 
-const updateUnreadMessage = (timestamp) => {
-  const chatID = Session.get('idChatOpen');
-  const isPublic = chatID === PUBLIC_CHAT_ID;
-  const chatType = isPublic ? PUBLIC_GROUP_CHAT_ID : chatID;
+const updateUnreadMessage = (receiverID, timestamp) => {
+  const isPublic = receiverID === PUBLIC_CHAT_ID;
+  const chatType = isPublic ? PUBLIC_CHAT_USERID : receiverID;
   return UnreadMessages.update(chatType, timestamp);
 };
 
 const clearPublicChatHistory = () => (makeCall('clearPublicChatHistory'));
 
-const closePrivateChat = () => {
-  const chatID = Session.get('idChatOpen');
+const closePrivateChat = (chatID) => {
   const currentClosedChats = Storage.getItem(CLOSED_CHAT_LIST_KEY) || [];
 
   if (_.indexOf(currentClosedChats, chatID) < 0) {
@@ -216,8 +193,7 @@ const closePrivateChat = () => {
 };
 
 // if this private chat has been added to the list of closed ones, remove it
-const removeFromClosedChatsSession = () => {
-  const chatID = Session.get('idChatOpen');
+const removeFromClosedChatsSession = (chatID) => {
   const currentClosedChats = Storage.getItem(CLOSED_CHAT_LIST_KEY);
   if (_.indexOf(currentClosedChats, chatID) > -1) {
     Storage.setItem(CLOSED_CHAT_LIST_KEY, _.without(currentClosedChats, chatID));
@@ -234,15 +210,14 @@ const htmlDecode = (input) => {
 // Export the chat as [Hour:Min] user: message
 const exportChat = messageList => (
   messageList.map((message) => {
-    const date = new Date(message.timestamp);
+    const date = new Date(message.fromTime);
     const hour = date.getHours().toString().padStart(2, 0);
     const min = date.getMinutes().toString().padStart(2, 0);
     const hourMin = `[${hour}:${min}]`;
     if (message.type === SYSTEM_CHAT_TYPE) {
       return `${hourMin} ${message.message}`;
     }
-    const userName = message.sender === PUBLIC_CHAT_USER_ID ? '' : `${getUser(message.sender).name} :`;
-    return `${hourMin} ${userName} ${htmlDecode(message.message)}`;
+    return `${hourMin} ${message.fromUsername}: ${htmlDecode(message.message)}`;
   }).join('\n')
 );
 
@@ -270,18 +245,17 @@ const getNotified = (chat) => {
 };
 
 export default {
-  reduceAndMapGroupMessages,
-  getPublicGroupMessages,
-  getPrivateGroupMessages,
+  reduceAndMapMessages,
+  getPublicMessages,
+  getPrivateMessages,
   getUser,
-  getMeeting,
   getScrollPosition,
   hasUnreadMessages,
   lastReadMessageTime,
   isChatLocked,
   updateScrollPosition,
   updateUnreadMessage,
-  sendGroupMessage,
+  sendMessage,
   closePrivateChat,
   removeFromClosedChatsSession,
   exportChat,

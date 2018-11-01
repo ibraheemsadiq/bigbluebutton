@@ -6,19 +6,11 @@ import calculateSlideData from '/imports/api/slides/server/helpers';
 export default function resizeSlide(meetingId, slide) {
   check(meetingId, String);
 
-  const {
-    podId,
-    presentationId,
-    pageId,
-    widthRatio,
-    heightRatio,
-    xOffset,
-    yOffset,
-  } = slide;
+  const { presentationId } = slide;
+  const { pageId, widthRatio, heightRatio, xOffset, yOffset } = slide;
 
   const selector = {
     meetingId,
-    podId,
     presentationId,
     id: pageId,
   };

@@ -1,18 +1,18 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
-import { Session } from 'meteor/session';
+import { withRouter } from 'react-router';
 import Meetings from '/imports/api/meetings';
 import Auth from '/imports/ui/services/auth';
 import { meetingIsBreakout } from '/imports/ui/components/app/service';
-import getFromUserSettings from '/imports/ui/services/users-settings';
 import userListService from '../user-list/service';
 import ChatService from '../chat/service';
 import Service from './service';
 import NavBar from './component';
 
 const PUBLIC_CONFIG = Meteor.settings.public;
-const PUBLIC_GROUP_CHAT_ID = PUBLIC_CONFIG.chat.public_group_id;
+const PUBLIC_CHAT_KEY = PUBLIC_CONFIG.chat.public_id;
+const CLIENT_TITLE = PUBLIC_CONFIG.app.clientTitle;
 
 const NavBarContainer = ({ children, ...props }) => (
   <NavBar {...props}>
@@ -20,9 +20,7 @@ const NavBarContainer = ({ children, ...props }) => (
   </NavBar>
 );
 
-export default withTracker(() => {
-  const CLIENT_TITLE = getFromUserSettings('clientTitle', PUBLIC_CONFIG.app.clientTitle);
-
+export default withRouter(withTracker(({ location, router }) => {
   let meetingTitle;
   let meetingRecorded;
 
@@ -47,14 +45,14 @@ export default withTracker(() => {
     return users
       .map(user => user.id)
       .filter(userID => userID !== Auth.userID)
-      .concat(PUBLIC_GROUP_CHAT_ID)
+      .concat(PUBLIC_CHAT_KEY)
       .some(receiverID => ChatService.hasUnreadMessages(receiverID));
   };
 
   const breakouts = Service.getBreakouts();
   const currentUserId = Auth.userID;
 
-  const isExpanded = Session.get('isUserListOpen');
+  const isExpanded = location.pathname.indexOf('/users') !== -1;
 
   return {
     isExpanded,
@@ -66,7 +64,11 @@ export default withTracker(() => {
     isBreakoutRoom: meetingIsBreakout(),
     beingRecorded: meetingRecorded,
     toggleUserList: () => {
-      Session.set('isUserListOpen', !isExpanded);
+      if (location.pathname.indexOf('/users') !== -1) {
+        router.push('/');
+      } else {
+        router.push('/users');
+      }
     },
   };
-})(NavBarContainer);
+})(NavBarContainer));

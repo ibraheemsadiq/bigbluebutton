@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { withTracker } from 'meteor/react-meteor-data';
 import { meetingIsBreakout } from '/imports/ui/components/app/service';
 import Meetings from '/imports/api/meetings';
-import getFromUserSettings from '/imports/ui/services/users-settings';
 import Service from './service';
 import UserList from './component';
 
@@ -23,7 +22,6 @@ const propTypes = {
   toggleVoice: PropTypes.func.isRequired,
   changeRole: PropTypes.func.isRequired,
   roving: PropTypes.func.isRequired,
-  getGroupChatPrivate: PropTypes.func.isRequired,
 };
 
 const UserListContainer = props => <UserList {...props} />;
@@ -48,9 +46,7 @@ export default withTracker(({ chatID, compact }) => ({
   roving: Service.roving,
   CustomLogoUrl: Service.getCustomLogoUrl(),
   compact,
-  getGroupChatPrivate: Service.getGroupChatPrivate,
   handleEmojiChange: Service.setEmojiStatus,
   getEmojiList: Service.getEmojiList(),
   getEmoji: Service.getEmoji(),
-  showBranding: getFromUserSettings('displayBrandingArea', Meteor.settings.public.app.branding.displayBrandingArea),
 }))(UserListContainer);

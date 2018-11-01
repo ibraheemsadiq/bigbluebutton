@@ -1,11 +1,9 @@
 @import "/imports/ui/stylesheets/variables/_all";
 
-:root {
-  --navbar-height: 63px; // TODO: Change to NavBar real height
-  --actionsbar-height: 75px; // TODO: Change to ActionsBar real height
-  --bars-padding: calc(var(--lg-padding-x) - .45rem); // -.45 so user-list and chat title is aligned with the presentation title
-  --userlist-handle-width: 5px; // 5px so user-list and chat resize handle render as the same size
-}
+$navbar-height: 63px; // TODO: Change to NavBar real height
+$actionsbar-height: 75px; // TODO: Change to ActionsBar real height
+$bars-padding: $lg-padding-x - .45rem; // -.45 so user-list and chat title is aligned with the presentation title
+$userlist-handle-width: 5px; // 5px so user-list and chat resize handle render as the same size
 
 .main {
   position: fixed;
@@ -20,7 +18,7 @@
   text-align: center;
 
   font-size: 1.5rem;
-  padding: var(--bars-padding);
+  padding: $bars-padding;
 }
 
 .wrapper {
@@ -105,7 +103,7 @@
   order: 1;
 
   @include mq($small-only) {
-    top: var(--navbar-height);
+    top: $navbar-height;
   }
 
   @include mq($medium-up) {
@@ -119,8 +117,8 @@
 }
 
 .userlistPad {
-  background-color: var(--color-off-white);
-  width: var(--userlist-handle-width);
+  background-color: $color-off-white;
+  width: $userlist-handle-width;
 }
 
 .compact {
@@ -135,7 +133,7 @@
   @include mq($small-only) {
     z-index: 3;
     height: auto;
-    top: var(--navbar-height);
+    top: $navbar-height;
     overflow: visible;
   }
 
@@ -189,7 +187,7 @@
 
 .actionsbar {
   flex: 1;
-  padding: var(--bars-padding);
+  padding: $bars-padding;
   position: relative;
   order: 3;
 }

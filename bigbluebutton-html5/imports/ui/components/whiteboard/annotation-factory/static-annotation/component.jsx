@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import StaticAnnotationService from './service';
 
 export default class StaticAnnotation extends React.Component {
+
   // completed annotations should never update
   shouldComponentUpdate() {
     return false;
@@ -18,14 +19,12 @@ export default class StaticAnnotation extends React.Component {
         annotation={annotation.annotationInfo}
         slideWidth={this.props.slideWidth}
         slideHeight={this.props.slideHeight}
-        whiteboardId={this.props.whiteboardId}
       />
     );
   }
 }
 
 StaticAnnotation.propTypes = {
-  whiteboardId: PropTypes.string.isRequired,
   shapeId: PropTypes.string.isRequired,
   drawObject: PropTypes.func.isRequired,
   slideWidth: PropTypes.number.isRequired,

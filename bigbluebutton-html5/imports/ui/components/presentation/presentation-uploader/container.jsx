@@ -22,7 +22,6 @@ export default withTracker(() => {
       currentPresentations,
       presentations,
       PRESENTATION_CONFIG.uploadEndpoint,
-      'DEFAULT_PRESENTATION_POD',
     ),
   };
 })(PresentationUploaderContainer);

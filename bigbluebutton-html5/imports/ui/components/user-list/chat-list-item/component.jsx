@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { withRouter, Link } from 'react-router';
 import cx from 'classnames';
 import { defineMessages, injectIntl } from 'react-intl';
-import { Session } from 'meteor/session';
 import { styles } from './styles';
 import ChatAvatar from './chat-avatar/component';
 import ChatIcon from './chat-icon/component';
@@ -22,6 +22,10 @@ const intlMessages = defineMessages({
     description: 'plural aria label for new messages',
   },
 });
+
+const CHAT_CONFIG = Meteor.settings.public.chat;
+const PRIVATE_CHAT_PATH = CHAT_CONFIG.path_route;
+const CLOSED_CHAT_PATH = 'users/';
 
 const SHORTCUTS_CONFIG = Meteor.settings.public.app.shortcuts;
 const TOGGLE_CHAT_PUB_AK = SHORTCUTS_CONFIG.togglePublicChat.accesskey;
@@ -45,10 +49,6 @@ const defaultProps = {
   openChat: '',
 };
 
-const toggleChatOpen = () => {
-  Session.set('isChatOpen', !Session.get('isChatOpen'));
-};
-
 const ChatListItem = (props) => {
   const {
     chat,
@@ -57,27 +57,25 @@ const ChatListItem = (props) => {
     intl,
     tabIndex,
     isPublicChat,
+    location,
   } = props;
 
+  let linkPath = [PRIVATE_CHAT_PATH, chat.id].join('');
+  linkPath = location.pathname.includes(linkPath) ? CLOSED_CHAT_PATH : linkPath;
   const isCurrentChat = chat.id === openChat;
   const linkClasses = {};
   linkClasses[styles.active] = isCurrentChat;
 
   return (
-    <div
-      role="button"
+    <Link
+      data-test="publicChatLink"
+      to={linkPath}
       className={cx(styles.chatListItem, linkClasses)}
+      role="button"
       aria-expanded={isCurrentChat}
       tabIndex={tabIndex}
       accessKey={isPublicChat(chat) ? TOGGLE_CHAT_PUB_AK : null}
-      onClick={() => {
-        toggleChatOpen();
-        Session.set('idChatOpen', chat.id);
-      }}
-      id="chat-toggle-button"
-      aria-label={isPublicChat(chat) ? intl.formatMessage(intlMessages.titlePublic) : chat.name}
     >
-
       <div className={styles.chatListItemLink}>
         <div className={styles.chatIcon}>
           {chat.icon ?
@@ -92,8 +90,7 @@ const ChatListItem = (props) => {
         <div className={styles.chatName}>
           {!compact ?
             <span className={styles.chatNameMain}>
-              {isPublicChat(chat) ?
-              intl.formatMessage(intlMessages.titlePublic) : chat.name}
+              {isPublicChat(chat) ? intl.formatMessage(intlMessages.titlePublic) : chat.name}
             </span> : null}
         </div>
         {(chat.unreadCounter > 0) ?
@@ -102,11 +99,11 @@ const ChatListItem = (props) => {
           />
           : null}
       </div>
-    </div>
+    </Link>
   );
 };
 
 ChatListItem.propTypes = propTypes;
 ChatListItem.defaultProps = defaultProps;
 
-export default injectIntl(ChatListItem);
+export default withRouter(injectIntl(ChatListItem));

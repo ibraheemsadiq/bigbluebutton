@@ -3,10 +3,8 @@ import Storage from '/imports/ui/services/storage/session';
 import Users from '/imports/api/users';
 import Auth from '/imports/ui/services/auth';
 import WhiteboardMultiUser from '/imports/api/whiteboard-multi-user/';
-import getFromUserSettings from '/imports/ui/services/users-settings';
 
 const DRAW_SETTINGS = 'drawSettings';
-const WHITEBOARD_TOOLBAR = Meteor.settings.public.whiteboard.toolbar;
 
 const makeSetter = key => (value) => {
   const drawSettings = Storage.getItem(DRAW_SETTINGS);
@@ -24,8 +22,8 @@ const clearWhiteboard = (whiteboardId) => {
   makeCall('clearWhiteboard', whiteboardId);
 };
 
-const changeWhiteboardMode = (multiUser, whiteboardId) => {
-  makeCall('changeWhiteboardAccess', multiUser, whiteboardId);
+const changeWhiteboardMode = (multiUser) => {
+  makeCall('changeWhiteboardAccess', multiUser);
 };
 
 const setInitialWhiteboardToolbarValues = (tool, thickness, color, fontSize, textShape) => {
@@ -59,41 +57,14 @@ const getTextShapeActiveId = () => {
   return drawSettings ? drawSettings.textShape.textShapeActiveId : '';
 };
 
-const getMultiUserStatus = (whiteboardId) => {
-  const data = WhiteboardMultiUser.findOne({ meetingId: Auth.meetingID, whiteboardId });
+const getMultiUserStatus = () => {
+  const data = WhiteboardMultiUser.findOne({ meetingId: Auth.meetingID });
   return data ? data.multiUser : false;
 };
 
 const isPresenter = () => {
   const currentUser = Users.findOne({ userId: Auth.userID });
   return currentUser ? currentUser.presenter : false;
-};
-
-const filterAnnotationList = () => {
-  const multiUserPenOnly = getFromUserSettings('multiUserPenOnly', WHITEBOARD_TOOLBAR.multiUserPenOnly);
-
-  let filteredAnnotationList = WHITEBOARD_TOOLBAR.tools;
-
-  if (!isPresenter() && multiUserPenOnly) {
-    filteredAnnotationList = [{
-      icon: 'pen_tool',
-      value: 'pencil',
-    }];
-  }
-
-  const presenterTools = getFromUserSettings('presenterTools', WHITEBOARD_TOOLBAR.presenterTools);
-  if (isPresenter() && Array.isArray(presenterTools)) {
-    filteredAnnotationList = WHITEBOARD_TOOLBAR.tools.filter(el =>
-      presenterTools.includes(el.value));
-  }
-
-  const multiUserTools = getFromUserSettings('multiUserTools', WHITEBOARD_TOOLBAR.multiUserTools);
-  if (!isPresenter() && !multiUserPenOnly && Array.isArray(multiUserTools)) {
-    filteredAnnotationList = WHITEBOARD_TOOLBAR.tools.filter(el =>
-      multiUserTools.includes(el.value));
-  }
-
-  return filteredAnnotationList;
 };
 
 export default {
@@ -110,5 +81,4 @@ export default {
   getTextShapeActiveId,
   getMultiUserStatus,
   isPresenter,
-  filterAnnotationList,
 };

@@ -26,8 +26,8 @@ const isPresenter = () => {
   return currentUser ? currentUser.presenter : false;
 };
 
-const getMultiUserStatus = (whiteboardId) => {
-  const data = WhiteboardMultiUser.findOne({ meetingId: Auth.meetingID, whiteboardId });
+const getMultiUserStatus = () => {
+  const data = WhiteboardMultiUser.findOne({ meetingId: Auth.meetingID });
   return data ? data.multiUser : false;
 };
 

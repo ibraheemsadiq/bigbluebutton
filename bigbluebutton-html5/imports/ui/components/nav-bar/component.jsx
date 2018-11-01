@@ -79,19 +79,22 @@ class NavBar extends Component {
     this.handleToggleUserList = this.handleToggleUserList.bind(this);
   }
 
+  handleToggleUserList() {
+    this.props.toggleUserList();
+  }
+
   componentDidUpdate(oldProps) {
     const {
       breakouts,
       getBreakoutJoinURL,
       isBreakoutRoom,
-      mountModal,
     } = this.props;
 
     const hadBreakouts = oldProps.breakouts.length;
     const hasBreakouts = breakouts.length;
 
     if (!hasBreakouts && hadBreakouts) {
-      closeBreakoutJoinConfirmation(mountModal);
+      closeBreakoutJoinConfirmation(this.props.mountModal);
     }
 
     breakouts.forEach((breakout) => {
@@ -107,10 +110,6 @@ class NavBar extends Component {
     if (!breakouts.length && this.state.didSendBreakoutInvite) {
       this.setState({ didSendBreakoutInvite: false });
     }
-  }
-
-  handleToggleUserList() {
-    this.props.toggleUserList();
   }
 
   inviteUserToBreakout(breakout) {
@@ -183,9 +182,6 @@ class NavBar extends Component {
     toggleBtnClasses[styles.btn] = true;
     toggleBtnClasses[styles.btnWithNotificationDot] = hasUnreadMessages;
 
-    let ariaLabel = intl.formatMessage(intlMessages.toggleUserListAria);
-    ariaLabel += hasUnreadMessages ? (` ${intl.formatMessage(intlMessages.newMessages)}`) : '';
-
     return (
       <div className={styles.navbar}>
         <div className={styles.left}>
@@ -196,11 +192,16 @@ class NavBar extends Component {
             circle
             hideLabel
             label={intl.formatMessage(intlMessages.toggleUserListLabel)}
-            aria-label={ariaLabel}
+            aria-label={intl.formatMessage(intlMessages.toggleUserListAria)}
             icon="user"
             className={cx(toggleBtnClasses)}
             aria-expanded={isExpanded}
+            aria-describedby="newMessage"
             accessKey={TOGGLE_USERLIST_AK}
+          />
+          <div
+            id="newMessage"
+            aria-label={hasUnreadMessages ? intl.formatMessage(intlMessages.newMessages) : null}
           />
         </div>
         <div className={styles.center}>

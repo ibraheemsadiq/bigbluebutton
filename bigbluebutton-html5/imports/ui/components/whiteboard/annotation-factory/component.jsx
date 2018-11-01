@@ -14,7 +14,8 @@ const ANNOTATION_CONFIG = Meteor.settings.public.whiteboard.annotations;
 const DRAW_END = ANNOTATION_CONFIG.status.end;
 
 export default class AnnotationFactory extends Component {
-  static renderStaticAnnotation(annotationInfo, slideWidth, slideHeight, drawObject, whiteboardId) {
+
+  static renderStaticAnnotation(annotationInfo, slideWidth, slideHeight, drawObject) {
     return (
       <StaticAnnotation
         key={annotationInfo._id}
@@ -22,12 +23,11 @@ export default class AnnotationFactory extends Component {
         drawObject={drawObject}
         slideWidth={slideWidth}
         slideHeight={slideHeight}
-        whiteboardId={whiteboardId}
       />
     );
   }
 
-  static renderReactiveAnnotation(annotationInfo, slideWidth, slideHeight, drawObject, whiteboardId) {
+  static renderReactiveAnnotation(annotationInfo, slideWidth, slideHeight, drawObject) {
     return (
       <ReactiveAnnotationContainer
         key={annotationInfo._id}
@@ -35,7 +35,6 @@ export default class AnnotationFactory extends Component {
         drawObject={drawObject}
         slideWidth={slideWidth}
         slideHeight={slideHeight}
-        whiteboardId={whiteboardId}
       />
     );
   }
@@ -50,20 +49,18 @@ export default class AnnotationFactory extends Component {
 
     if (annotationInfo.status === DRAW_END) {
       return AnnotationFactory.renderStaticAnnotation(
-        annotationInfo,
-        this.props.slideWidth,
-        this.props.slideHeight,
-        drawObject,
-        this.props.whiteboardId,
-      );
+          annotationInfo,
+          this.props.slideWidth,
+          this.props.slideHeight,
+          drawObject,
+        );
     }
     return AnnotationFactory.renderReactiveAnnotation(
-      annotationInfo,
-      this.props.slideWidth,
-      this.props.slideHeight,
-      drawObject,
-      this.props.whiteboardId,
-    );
+          annotationInfo,
+          this.props.slideWidth,
+          this.props.slideHeight,
+          drawObject,
+        );
   }
 
   render() {
@@ -79,7 +76,6 @@ export default class AnnotationFactory extends Component {
 }
 
 AnnotationFactory.propTypes = {
-  whiteboardId: PropTypes.string.isRequired,
   // initial width and height of the slide are required
   // to calculate the coordinates for each annotation
   slideWidth: PropTypes.number.isRequired,

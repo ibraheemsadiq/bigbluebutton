@@ -1,6 +1,5 @@
 import Users from '/imports/api/users';
-import GroupChat from '/imports/api/group-chat';
-import GroupChatMsg from '/imports/api/group-chat-msg';
+import Chat from '/imports/api/chat';
 import Meetings from '/imports/api/meetings';
 import Auth from '/imports/ui/services/auth';
 import UnreadMessages from '/imports/ui/services/unread-messages';
@@ -15,23 +14,17 @@ const APP_CONFIG = Meteor.settings.public.app;
 const ALLOW_MODERATOR_TO_UNMUTE_AUDIO = APP_CONFIG.allowModeratorToUnmuteAudio;
 
 const CHAT_CONFIG = Meteor.settings.public.chat;
-const PUBLIC_GROUP_CHAT_ID = CHAT_CONFIG.public_group_id;
+const PRIVATE_CHAT_TYPE = CHAT_CONFIG.type_private;
+const PUBLIC_CHAT_USERID = CHAT_CONFIG.public_userid;
 
 // session for closed chat list
 const CLOSED_CHAT_LIST_KEY = 'closedChatList';
 
 const mapOpenChats = (chat) => {
   const currentUserId = Auth.userID;
-
-  if (chat.sender !== currentUserId) {
-    return chat.sender;
-  }
-
-  const { chatId } = chat;
-
-  const userId = GroupChat.findOne({ chatId }).users.filter(user => user !== currentUserId);
-
-  return userId[0];
+  return chat.fromUserId !== currentUserId
+    ? chat.fromUserId
+    : chat.toUserId;
 };
 
 const CUSTOM_LOGO_URL_KEY = 'CustomLogoUrl';
@@ -191,21 +184,8 @@ const getUsers = () => {
 };
 
 const getOpenChats = (chatID) => {
-  const privateChat = GroupChat
-    .find({ users: { $all: [Auth.userID] } })
-    .fetch()
-    .map(chat => chat.chatId);
-
-  const filter = {
-    chatId: { $ne: PUBLIC_GROUP_CHAT_ID },
-  };
-
-  if (privateChat) {
-    filter.chatId = { $in: privateChat };
-  }
-
-  let openChats = GroupChatMsg
-    .find(filter)
+  let openChats = Chat
+    .find({ type: PRIVATE_CHAT_TYPE })
     .fetch()
     .map(mapOpenChats);
 
@@ -213,7 +193,7 @@ const getOpenChats = (chatID) => {
     openChats.push(chatID);
   }
 
-  openChats = _.uniq(_.compact(openChats));
+  openChats = _.uniq(openChats);
 
   openChats = Users
     .find({ userId: { $in: openChats } })
@@ -249,7 +229,7 @@ const getOpenChats = (chatID) => {
     id: 'public',
     name: 'Public Chat',
     icon: 'group_chat',
-    unreadCounter: UnreadMessages.count(PUBLIC_GROUP_CHAT_ID),
+    unreadCounter: UnreadMessages.count(PUBLIC_CHAT_USERID),
   });
 
   return openChats
@@ -258,7 +238,7 @@ const getOpenChats = (chatID) => {
 
 const isVoiceOnlyUser = userId => userId.toString().startsWith('v_');
 
-const getAvailableActions = (currentUser, user, isBreakoutRoom) => {
+const getAvailableActions = (currentUser, user, router, isBreakoutRoom) => {
   const isDialInUser = isVoiceOnlyUser(user.id) || user.isPhoneUser;
 
   const hasAuthority = currentUser.isModerator || user.isCurrent;
@@ -422,14 +402,6 @@ const roving = (event, itemCount, changeState) => {
   }
 };
 
-const getGroupChatPrivate = (sender, receiver) => {
-  const privateChat = GroupChat.findOne({ users: { $all: [receiver.id, sender.id] } });
-
-  if (!privateChat) {
-    makeCall('createGroupChat', receiver);
-  }
-};
-
 export default {
   setEmojiStatus,
   assignPresenter,
@@ -446,8 +418,6 @@ export default {
   roving,
   setCustomLogoUrl,
   getCustomLogoUrl,
-  getGroupChatPrivate,
   getEmojiList: () => EMOJI_STATUSES,
   getEmoji: () => Users.findOne({ userId: Auth.userID }).emoji,
 };
-

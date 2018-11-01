@@ -13,7 +13,6 @@ const propTypes = {
   handleShareScreen: PropTypes.func.isRequired,
   handleUnshareScreen: PropTypes.func.isRequired,
   isVideoBroadcasting: PropTypes.bool.isRequired,
-  screenSharingCheck: PropTypes.bool.isRequired,
 };
 
 const intlMessages = defineMessages({
@@ -44,7 +43,7 @@ const isMobileBrowser = (BROWSER_RESULTS ? BROWSER_RESULTS.mobile : false) ||
   (BROWSER_RESULTS && BROWSER_RESULTS.os ?
     BROWSER_RESULTS.os.includes('Android') : // mobile flag doesn't always work
     false);
-
+const screenSharingCheck = Meteor.settings.public.kurento.enableScreensharing;
 const ICE_CONNECTION_FAILED = 'ICE connection failed';
 
 const DesktopShare = ({
@@ -53,7 +52,6 @@ const DesktopShare = ({
   handleUnshareScreen,
   isVideoBroadcasting,
   isUserPresenter,
-  screenSharingCheck,
 }) => {
   const onFail = (error) => {
     switch (error) {

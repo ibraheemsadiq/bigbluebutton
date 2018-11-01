@@ -1,6 +1,5 @@
 import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
-import getFromUserSettings from '/imports/ui/services/users-settings';
 import VideoProvider from './component';
 import VideoService from './service';
 
@@ -13,5 +12,5 @@ export default withTracker(() => ({
   userId: VideoService.userId(),
   sessionToken: VideoService.sessionToken(),
   userName: VideoService.userName(),
-  enableVideoStats: getFromUserSettings('enableVideoStats', Meteor.settings.public.kurento.enableVideoStats),
+  enableVideoStats: Meteor.settings.public.kurento.enableVideoStats,
 }))(VideoProviderContainer);

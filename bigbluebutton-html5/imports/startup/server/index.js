@@ -2,7 +2,6 @@ import { Meteor } from 'meteor/meteor';
 import Langmap from 'langmap';
 import Users from '/imports/api/users';
 import fs from 'fs';
-import './settings';
 import Logger from './logger';
 import Redis from './redis';
 

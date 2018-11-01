@@ -1,25 +1,14 @@
-import PresentationPods from '/imports/api/presentation-pods';
-import Auth from '/imports/ui/services/auth';
+import AuthSingleton from '/imports/ui/services/auth';
 import Slides from '/imports/api/slides';
 import { makeCall } from '/imports/ui/services/api';
 
-const getSlideData = (podId, presentationId) => {
-  // Get  meetingId and userId
-  const meetingId = Auth.meetingID;
-  const userId = Auth.userID;
-
-  // fetching the presentation pod in order to see who owns it
-  const selector = {
-    meetingId,
-    podId,
-  };
-  const pod = PresentationPods.findOne(selector);
-  const userIsPresenter = pod.currentPresenterId === userId;
+const getSlideData = (presentationId) => {
+  // Get userId and meetingId
+  const meetingId = AuthSingleton.meetingID;
 
   // Get total number of slides in this presentation
   const numberOfSlides = Slides.find({
     meetingId,
-    podId,
     presentationId,
   }).fetch().length;
 
@@ -28,25 +17,21 @@ const getSlideData = (podId, presentationId) => {
   };
 };
 
-const previousSlide = (currentSlideNum, podId) => {
+const previousSlide = (currentSlideNum) => {
   if (currentSlideNum > 1) {
-    makeCall('switchSlide', currentSlideNum - 1, podId);
+    makeCall('switchSlide', currentSlideNum - 1);
   }
 };
 
-const nextSlide = (currentSlideNum, numberOfSlides, podId) => {
+const nextSlide = (currentSlideNum, numberOfSlides) => {
   if (currentSlideNum < numberOfSlides) {
-    makeCall('switchSlide', currentSlideNum + 1, podId);
+    makeCall('switchSlide', currentSlideNum + 1);
   }
 };
 
-const zoomSlide = (currentSlideNum, podId, widthRatio, heightRatio, xOffset, yOffset) => {
-  makeCall('zoomSlide', currentSlideNum, podId, widthRatio, heightRatio, xOffset, yOffset);
-};
-
-
-const skipToSlide = (requestedSlideNum, podId) => {
-  makeCall('switchSlide', requestedSlideNum, podId);
+const skipToSlide = (event) => {
+  const requestedSlideNum = parseInt(event.target.value, 10);
+  makeCall('switchSlide', requestedSlideNum);
 };
 
 export default {
@@ -54,5 +39,4 @@ export default {
   nextSlide,
   previousSlide,
   skipToSlide,
-  zoomSlide,
 };

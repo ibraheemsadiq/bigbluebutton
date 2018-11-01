@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { defineMessages, injectIntl } from 'react-intl';
 import Button from '/imports/ui/components/button/component';
+import { withRouter } from 'react-router';
 import { styles } from './styles';
 
 const intlMessages = defineMessages({
@@ -36,9 +37,7 @@ const defaultProps = {
 class ErrorScreen extends React.PureComponent {
   render() {
     const {
-      intl,
-      code,
-      children,
+      intl, code, children, router,
     } = this.props;
 
     let formatedMessage = intl.formatMessage(intlMessages[defaultProps.code]);
@@ -61,7 +60,7 @@ class ErrorScreen extends React.PureComponent {
         <div className={styles.content}>
           <Button
             size="sm"
-            onClick={() => Session.set('isMeetingEnded', true)}
+            onClick={() => router.push('/logout/')}
             label={intl.formatMessage(intlMessages.leave)}
           />
         </div>
@@ -70,7 +69,7 @@ class ErrorScreen extends React.PureComponent {
   }
 }
 
-export default injectIntl(ErrorScreen);
+export default withRouter(injectIntl(ErrorScreen));
 
 ErrorScreen.propTypes = propTypes;
 ErrorScreen.defaultProps = defaultProps;

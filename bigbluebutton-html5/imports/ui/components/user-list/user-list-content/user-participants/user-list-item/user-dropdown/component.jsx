@@ -11,7 +11,6 @@ import DropdownList from '/imports/ui/components/dropdown/list/component';
 import DropdownListItem from '/imports/ui/components/dropdown/list/item/component';
 import DropdownListSeparator from '/imports/ui/components/dropdown/list/separator/component';
 import _ from 'lodash';
-import { Session } from 'meteor/session';
 import { styles } from './styles';
 import UserName from './../user-name/component';
 import UserIcons from './../user-icons/component';
@@ -170,6 +169,7 @@ class UserDropdown extends Component {
       intl,
       currentUser,
       user,
+      router,
       isBreakoutRoom,
       getAvailableActions,
       handleEmojiChange,
@@ -181,7 +181,7 @@ class UserDropdown extends Component {
       changeRole,
     } = this.props;
 
-    const actionPermissions = getAvailableActions(currentUser, user, isBreakoutRoom);
+    const actionPermissions = getAvailableActions(currentUser, user, router, isBreakoutRoom);
     const actions = [];
 
     const {
@@ -233,10 +233,7 @@ class UserDropdown extends Component {
       actions.push(this.makeDropdownItem(
         'openChat',
         intl.formatMessage(messages.ChatLabel),
-        () => {
-          Session.set('idChatOpen', user.id);
-          Session.set('isChatOpen', true);
-        },
+        () => this.onActionsHide(router.push(`/users/chat/${user.id}`)),
         'chat',
       ));
     }

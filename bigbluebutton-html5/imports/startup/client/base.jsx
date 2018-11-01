@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
+import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 import Auth from '/imports/ui/services/auth';
 import AppContainer from '/imports/ui/components/app/container';
@@ -12,25 +13,23 @@ import logger from '/imports/startup/client/logger';
 import Users from '/imports/api/users';
 import Annotations from '/imports/api/annotations';
 import AnnotationsLocal from '/imports/ui/components/whiteboard/service';
-import GroupChat from '/imports/api/group-chat';
-import { Session } from 'meteor/session';
 import IntlStartup from './intl';
 
-const CHAT_CONFIG = Meteor.settings.public.chat;
-const PUBLIC_GROUP_CHAT_ID = CHAT_CONFIG.public_group_id;
-const PUBLIC_CHAT_TYPE = CHAT_CONFIG.type_public;
-
 const propTypes = {
+  error: PropTypes.object,
+  errorCode: PropTypes.number,
   subscriptionsReady: PropTypes.bool.isRequired,
   locale: PropTypes.string,
+  endedCode: PropTypes.string,
   approved: PropTypes.bool,
-  meetingEnded: PropTypes.bool,
 };
 
 const defaultProps = {
+  error: undefined,
+  errorCode: undefined,
   locale: undefined,
+  endedCode: undefined,
   approved: undefined,
-  meetingEnded: false,
 };
 
 class Base extends Component {
@@ -39,9 +38,11 @@ class Base extends Component {
 
     this.state = {
       loading: false,
+      error: props.error || null,
     };
 
     this.updateLoadingState = this.updateLoadingState.bind(this);
+    this.updateErrorState = this.updateErrorState.bind(this);
   }
 
   componentWillUpdate() {
@@ -57,23 +58,29 @@ class Base extends Component {
     });
   }
 
+  updateErrorState(error = null) {
+    this.setState({
+      error,
+    });
+  }
+
   renderByState() {
-    const { updateLoadingState } = this;
-    const stateControls = { updateLoadingState };
+    const { updateLoadingState, updateErrorState } = this;
+    const stateControls = { updateLoadingState, updateErrorState };
 
-    const { loading } = this.state;
+    const { loading, error } = this.state;
 
-    const codeError = Session.get('codeError');
-    const { subscriptionsReady, meetingEnded } = this.props;
+    const { subscriptionsReady, errorCode } = this.props;
+    const { endedCode } = this.props.params;
 
-    if (meetingEnded) {
+    if (endedCode) {
       AudioManager.exitAudio();
-      return (<MeetingEnded code={Session.get('codeError')} />);
+      return (<MeetingEnded code={endedCode} />);
     }
 
-    if (codeError) {
-      logger.error(`User could not log in HTML5, hit ${codeError}`);
-      return (<ErrorScreen code={codeError} />);
+    if (error || errorCode) {
+      logger.error(`User could not log in HTML5, hit ${errorCode}`);
+      return (<ErrorScreen code={errorCode}>{error}</ErrorScreen>);
     }
 
     if (loading || !subscriptionsReady) {
@@ -89,9 +96,9 @@ class Base extends Component {
   }
 
   render() {
-    const { updateLoadingState } = this;
+    const { updateLoadingState, updateErrorState } = this;
     const { locale } = this.props;
-    const stateControls = { updateLoadingState };
+    const stateControls = { updateLoadingState, updateErrorState };
 
     return (
       <IntlStartup locale={locale} baseControls={stateControls}>
@@ -105,15 +112,15 @@ Base.propTypes = propTypes;
 Base.defaultProps = defaultProps;
 
 const SUBSCRIPTIONS_NAME = [
-  'users', 'meetings', 'polls', 'presentations',
+  'users', 'chat', 'meetings', 'polls', 'presentations',
   'slides', 'captions', 'breakouts', 'voiceUsers', 'whiteboard-multi-user', 'screenshare',
-  'group-chat', 'presentation-pods', 'users-settings',
 ];
 
-const BaseContainer = withTracker(() => {
+const BaseContainer = withRouter(withTracker(({ params, router }) => {
+  if (params.errorCode) return params;
+
   const { locale } = Settings.application;
   const { credentials, loggedIn } = Auth;
-  const { meetingId, requesterUserId } = credentials;
 
   if (!loggedIn) {
     return {
@@ -125,28 +132,12 @@ const BaseContainer = withTracker(() => {
   const subscriptionErrorHandler = {
     onError: (error) => {
       logger.error(error);
-      Session.set('isMeetingEnded', true);
-      Session.set('codeError', error.error);
+      return router.push('/logout');
     },
   };
 
   const subscriptionsHandlers = SUBSCRIPTIONS_NAME.map(name =>
     Meteor.subscribe(name, credentials, subscriptionErrorHandler));
-
-  const chats = GroupChat.find({
-    $or: [
-      {
-        meetingId,
-        access: PUBLIC_CHAT_TYPE,
-        chatId: { $ne: PUBLIC_GROUP_CHAT_ID },
-      },
-      { meetingId, users: { $all: [requesterUserId] } },
-    ],
-  }).fetch();
-
-  const chatIds = chats.map(chat => chat.chatId);
-
-  const groupChatMessageHandler = Meteor.subscribe('group-chat-msg', credentials, chatIds, subscriptionErrorHandler);
 
   const annotationsHandler = Meteor.subscribe('annotations', credentials, {
     onReady: () => {
@@ -166,12 +157,10 @@ const BaseContainer = withTracker(() => {
   const subscriptionsReady = subscriptionsHandlers.every(handler => handler.ready());
   return {
     approved: Users.findOne({ userId: Auth.userID, approved: true, guest: true }),
-    meetingEnded: Session.get('isMeetingEnded'),
     locale,
     subscriptionsReady,
     annotationsHandler,
-    groupChatMessageHandler,
   };
-})(Base);
+})(Base));
 
 export default BaseContainer;

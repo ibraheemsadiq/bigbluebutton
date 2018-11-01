@@ -1,8 +1,6 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import { defineMessages, injectIntl } from 'react-intl';
 import { withTracker } from 'meteor/react-meteor-data';
-import { Session } from 'meteor/session';
-import Auth from '/imports/ui/services/auth';
 import Chat from './component';
 import ChatService from './service';
 
@@ -32,7 +30,7 @@ const intlMessages = defineMessages({
 class ChatContainer extends Component {
   componentDidMount() {
     // in case of reopening a chat, need to make sure it's removed from closed list
-    ChatService.removeFromClosedChatsSession();
+    ChatService.removeFromClosedChatsSession(this.props.chatID);
   }
   render() {
     return (
@@ -43,8 +41,9 @@ class ChatContainer extends Component {
   }
 }
 
-export default injectIntl(withTracker(({ intl }) => {
-  const chatID = Session.get('idChatOpen') || PUBLIC_CHAT_KEY;
+export default injectIntl(withTracker(({ params, intl }) => {
+  const chatID = params.chatID || PUBLIC_CHAT_KEY;
+
   let messages = [];
   let isChatLocked = ChatService.isChatLocked(chatID);
   let title = intl.formatMessage(intlMessages.titlePublic);
@@ -53,64 +52,9 @@ export default injectIntl(withTracker(({ intl }) => {
   let systemMessageIntl = {};
 
   if (chatID === PUBLIC_CHAT_KEY) {
-    const { welcomeProp } = ChatService.getMeeting();
-    const user = ChatService.getUser(Auth.userID);
-
-    messages = ChatService.getPublicGroupMessages();
-
-    const time = user.logTime;
-    const welcomeId = `welcome-msg-${time}`;
-
-    const welcomeMsg = {
-      id: welcomeId,
-      content: [{
-        id: welcomeId,
-        text: welcomeProp.welcomeMsg,
-        time,
-      }],
-      time,
-      sender: null,
-    };
-
-    const moderatorTime = time + 1;
-    const moderatorId = `moderator-msg-${moderatorTime}`;
-
-    const moderatorMsg = {
-      id: moderatorId,
-      content: [{
-        id: moderatorId,
-        text: welcomeProp.modOnlyMessage,
-        time: moderatorTime,
-      }],
-      time: moderatorTime,
-      sender: null,
-    };
-
-    const messagesBeforeWelcomeMsg =
-      ChatService.reduceAndMapGroupMessages(messages.filter(message => message.timestamp < time));
-    const messagesAfterWelcomeMsg =
-      ChatService.reduceAndMapGroupMessages(messages.filter(message => message.timestamp >= time));
-
-    const clearMessage = messages.filter(message => message.message === 'PUBLIC_CHAT_CLEAR');
-
-    const hasClearMessage = clearMessage.length;
-
-    const showWelcomeMsg =
-      (hasClearMessage && clearMessage[0].timestamp < time) || !hasClearMessage;
-
-    const showModeratorMsg =
-      (user.isModerator)
-      && ((hasClearMessage && clearMessage[0].timestamp < moderatorTime) || !hasClearMessage);
-
-    const messagesFormated = messagesBeforeWelcomeMsg
-      .concat(showWelcomeMsg ? welcomeMsg : [])
-      .concat(showModeratorMsg ? moderatorMsg : [])
-      .concat(messagesAfterWelcomeMsg);
-
-    messages = messagesFormated.sort((a, b) => (a.time - b.time));
+    messages = ChatService.reduceAndMapMessages((ChatService.getPublicMessages()));
   } else {
-    messages = ChatService.getPrivateGroupMessages();
-
+    messages = ChatService.getPrivateMessages(chatID);
     const user = ChatService.getUser(chatID);
     chatName = user.name;
     systemMessageIntl = { 0: user.name };
@@ -155,7 +99,7 @@ export default injectIntl(withTracker(({ intl }) => {
   const lastReadMessageTime = ChatService.lastReadMessageTime(chatID);
 
   return {
-    chatID: Session.get('idChatOpen'),
+    chatID,
     chatName,
     title,
     messages,
@@ -170,13 +114,13 @@ export default injectIntl(withTracker(({ intl }) => {
       handleClosePrivateChat: chatId => ChatService.closePrivateChat(chatId),
 
       handleSendMessage: (message) => {
-        ChatService.updateScrollPosition(null);
-        return ChatService.sendGroupMessage(message);
+        ChatService.updateScrollPosition(chatID, null);
+        return ChatService.sendMessage(chatID, message);
       },
 
-      handleScrollUpdate: position => ChatService.updateScrollPosition(position),
+      handleScrollUpdate: position => ChatService.updateScrollPosition(chatID, position),
 
-      handleReadMessage: timestamp => ChatService.updateUnreadMessage(timestamp),
+      handleReadMessage: timestamp => ChatService.updateUnreadMessage(chatID, timestamp),
     },
   };
 })(ChatContainer));

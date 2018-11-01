@@ -16,6 +16,7 @@ const TOOLBAR_CONFIG = Meteor.settings.public.whiteboard.toolbar;
 const ANNOTATION_COLORS = TOOLBAR_CONFIG.colors;
 const THICKNESS_RADIUSES = TOOLBAR_CONFIG.thickness;
 const FONT_SIZES = TOOLBAR_CONFIG.font_sizes;
+const ANNOTATION_TOOLS = TOOLBAR_CONFIG.tools;
 
 const intlMessages = defineMessages({
   toolbarTools: {
@@ -63,27 +64,18 @@ const intlMessages = defineMessages({
 const runExceptInEdge = fn => (browser().name === 'edge' ? noop : fn);
 
 class WhiteboardToolbar extends Component {
-  constructor(props) {
-    super(props);
-
-    const { annotations } = this.props;
-    const isMobile = browser().mobile;
-
-    let annotationSelected = {
-      icon: isMobile ? 'hand' : 'pen_tool',
-      value: isMobile ? 'hand' : 'pencil',
-    };
-
-    if (!annotations.some(el => el.value === annotationSelected.value) && annotations.length > 0) {
-      annotationSelected = annotations[annotations.length - 1];
-    }
+  constructor() {
+    super();
 
     this.state = {
       // a variable to control which list is currently open
       currentSubmenuOpen: '',
 
       // variables to keep current selected draw settings
-      annotationSelected,
+      annotationSelected: {
+        icon: 'pen_tool',
+        value: 'pencil',
+      },
       thicknessSelected: { value: 4 },
       colorSelected: { value: '#000000' },
       fontSizeSelected: { value: 20 },
@@ -151,17 +143,9 @@ class WhiteboardToolbar extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { annotations } = this.props;
-    const { annotationSelected } = prevState;
-    const hadInAnnotations = annotations.some(el => el.value === annotationSelected.value);
-
     // if color or thickness were changed
     // we might need to trigger svg animation for Color and Thickness icons
     this.animateSvgIcons(prevState);
-
-    if (!hadInAnnotations) {
-      this.handleAnnotationChange(annotations[annotations.length - 1]);
-    }
   }
 
   setToolbarValues(drawSettings) {
@@ -249,8 +233,7 @@ class WhiteboardToolbar extends Component {
   }
 
   handleSwitchWhiteboardMode() {
-    const { multiUser, whiteboardId } = this.props;
-    this.props.actions.changeWhiteboardMode(!multiUser, whiteboardId);
+    this.props.actions.changeWhiteboardMode(!this.props.multiUser);
   }
 
   // changes a current selected annotation both in the state and in the session
@@ -396,7 +379,7 @@ class WhiteboardToolbar extends Component {
 
   renderThicknessItem() {
     const { intl } = this.props;
-    const isDisabled = this.state.annotationSelected.value === 'hand';
+    const isDisabled = this.state.annotationSelected.value === 'pointer';
     return (
       <ToolbarMenuItem
         disabled={isDisabled}
@@ -429,14 +412,7 @@ class WhiteboardToolbar extends Component {
     return (
       <svg className={styles.customSvgIcon} shapeRendering="geometricPrecision">
         <RenderInBrowser only edge>
-          <circle
-            cx="50%"
-            cy="50%"
-            r={this.state.thicknessSelected.value}
-            stroke="black"
-            strokeWidth="1"
-            fill={this.state.colorSelected.value}
-          />
+          <circle cx="50%" cy="50%" r={this.state.thicknessSelected.value} stroke="black" strokeWidth="1" fill={this.state.colorSelected.value} />
         </RenderInBrowser>
         <RenderInBrowser except edge>
           <circle
@@ -476,7 +452,7 @@ class WhiteboardToolbar extends Component {
 
   renderColorItem() {
     const { intl } = this.props;
-    const isDisabled = this.state.annotationSelected.value === 'hand';
+    const isDisabled = this.state.annotationSelected.value === 'pointer';
     return (
       <ToolbarMenuItem
         disabled={isDisabled}
@@ -509,15 +485,7 @@ class WhiteboardToolbar extends Component {
     return (
       <svg className={styles.customSvgIcon}>
         <RenderInBrowser only edge>
-          <rect
-            x="25%"
-            y="25%"
-            width="50%"
-            height="50%"
-            stroke="black"
-            strokeWidth="1"
-            fill={this.state.colorSelected.value}
-          />
+          <rect x="25%" y="25%" width="50%" height="50%" stroke="black" strokeWidth="1" fill={this.state.colorSelected.value} />
         </RenderInBrowser>
         <RenderInBrowser except edge>
           <rect x="25%" y="25%" width="50%" height="50%" stroke="black" strokeWidth="1">
@@ -605,6 +573,7 @@ WhiteboardToolbar.defaultProps = {
   colors: ANNOTATION_COLORS,
   thicknessRadiuses: THICKNESS_RADIUSES,
   fontSizes: FONT_SIZES,
+  annotations: ANNOTATION_TOOLS,
 };
 
 WhiteboardToolbar.propTypes = {

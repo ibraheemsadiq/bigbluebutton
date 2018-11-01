@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { defineMessages, injectIntl } from 'react-intl';
-import { Session } from 'meteor/session';
 import _ from 'lodash';
 import UnreadMessages from '/imports/ui/services/unread-messages';
 import ChatAudioAlert from './audio-alert/component';
@@ -114,6 +113,7 @@ class ChatAlert extends Component {
       disableNotify,
       openChats,
       intl,
+      currentChatID,
     } = this.props;
 
     if (disableNotify) return;
@@ -121,7 +121,7 @@ class ChatAlert extends Component {
     const hasUnread = ({ unreadCounter }) => unreadCounter > 0;
     const isNotNotified = ({ id, unreadCounter }) => unreadCounter !== this.state.notified[id];
     const isPrivate = ({ id }) => id !== PUBLIC_KEY;
-    const thisChatClosed = ({ id }) => !Session.equals('idChatOpen', id);
+    const thisChatClosed = ({ id }) => id !== currentChatID;
 
     const chatsNotify = openChats
       .filter(hasUnread)
@@ -149,7 +149,7 @@ class ChatAlert extends Component {
           .filter(({ fromTime, fromUserId }) => fromTime > (this.state.notified[fromUserId] || 0));
 
           const reduceMessages = Service
-            .reduceAndMapGroupMessages(getChatmessages);
+            .reduceAndMapMessages(getChatmessages);
 
           if (!reduceMessages.length) return null;
 
@@ -158,7 +158,7 @@ class ChatAlert extends Component {
           const limitingMessages = flatMessages;
 
           return (<ChatPushAlert
-            key={_.uniqueId('id-')}
+            key={id}
             chatId={id}
             content={limitingMessages}
             message={<span >{message}</span>}
@@ -184,14 +184,15 @@ class ChatAlert extends Component {
       publicUserId,
       intl,
       disableNotify,
+      currentChatID,
     } = this.props;
 
     const publicUnread = UnreadMessages.getUnreadMessages(publicUserId);
-    const publicUnreadReduced = Service.reduceAndMapGroupMessages(publicUnread);
+    const publicUnreadReduced = Service.reduceAndMapMessages(publicUnread);
 
     if (disableNotify) return;
     if (!Service.hasUnreadMessages(publicUserId)) return;
-    if (Session.equals('idChatOpen', PUBLIC_KEY)) return;
+    if (currentChatID === PUBLIC_KEY) return;
 
     const checkIfBeenNotified = ({ sender, time }) =>
       time > (this.state.publicNotified[sender.id] || 0);

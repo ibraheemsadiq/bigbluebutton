@@ -1,25 +1,21 @@
 @import "/imports/ui/stylesheets/variables/_all";
 
 .testAudioBtn {
-  --hover-color: #0c5cb2;
-
   background-color: transparent;
-  color: var(--color-primary);
+  color: $color-primary;
   font-weight: normal;
   border: none;
 
   i {
-    color: var(--color-primary);
+    color: $color-primary;
     transition: all .2s ease-in-out;
   }
 
-  &:hover,
-  &:focus,
-  &:active {
+  &:hover, &:focus, &:active {
     background-color: transparent !important;
-    color: var(--hover-color) !important;
+    color: darken($color-primary, 17%) !important;
     i {
-      color: var(--hover-color);
+      color: darken($color-primary, 17%);
     }
   }
 }

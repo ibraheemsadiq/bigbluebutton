@@ -47,42 +47,42 @@
 
 .closeBtn {
   position: relative;
-  background-color: var(--color-white);
+  background-color: $color-white;
 
   i {
-    color: var(--color-gray-light);
+    color: $color-gray-light;
   }
 
   &:focus,
-  &:hover {
-    background-color: var(--color-gray-lighter);
-    i {
-      color: var(--color-gray);
+  &:hover{
+    background-color: $color-gray-lighter;
+    i{
+      color: $color-gray;
     }
   }
 }
-.warning {
+.warning{
   text-align: center;
-  font-weight: var(--headings-font-weight);
+  font-weight: $headings-font-weight;
   font-size: 5rem;
   white-space: normal;
 }
-.text {
-  margin: var(--line-height-computed);
+.text{
+  margin: $line-height-computed;
   text-align: center;
 }
 
-.main {
-  margin: var(--line-height-computed);
+.main{
+  margin: $line-height-computed;
   text-align: center;
-  font-size: var(--font-size-large);
+  font-size: $font-size-large;
 }
 .audioBtn {
   &:focus {
     outline: none !important;
   }
 
-  i {
+  i{
     color: #3c5764;
   }
 }
@@ -103,7 +103,7 @@
 // When hovering over a button of class audioBtn, change the border colour of first span-child
 .audioBtn:hover span:first-child,
 .audioBtn:focus span:first-child {
-  border: 5px solid var(--color-primary);
+  border: 5px solid $color-primary;
   background-color: #f1f8ff;
 }
 
@@ -132,7 +132,7 @@
   font-size: 2rem;
 }
 
-.connectingAnimation {
+.connectingAnimation{
   &:after {
     overflow: hidden;
     display: inline-block;
@@ -152,7 +152,7 @@
 }
 
 .audioNote {
-  color: var(--color-text);
+  color: $color-text;
   display: inline-block;
   font-size: 0.9rem;
 }

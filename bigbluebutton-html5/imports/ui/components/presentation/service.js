@@ -1,17 +1,15 @@
 import WhiteboardMultiUser from '/imports/api/whiteboard-multi-user/';
-import PresentationPods from '/imports/api/presentation-pods';
 import Presentations from '/imports/api/presentations';
 import Slides from '/imports/api/slides';
 import Users from '/imports/api/users';
 import Auth from '/imports/ui/services/auth';
 
-const getCurrentPresentation = podId => Presentations.findOne({
-  podId,
+const getCurrentPresentation = () => Presentations.findOne({
   current: true,
 });
 
-const getCurrentSlide = (podId) => {
-  const currentPresentation = getCurrentPresentation(podId);
+const getCurrentSlide = () => {
+  const currentPresentation = getCurrentPresentation();
 
   if (!currentPresentation) {
     return null;
@@ -19,7 +17,6 @@ const getCurrentSlide = (podId) => {
 
   return Slides.findOne(
     {
-      podId,
       presentationId: currentPresentation.id,
       current: true,
     },
@@ -35,24 +32,13 @@ const getCurrentSlide = (podId) => {
   );
 };
 
-const isPresenter = (podId) => {
-  // a main presenter in the meeting always owns a default pod
-  if (podId === 'DEFAULT_PRESENTATION_POD') {
-    const currentUser = Users.findOne({ userId: Auth.userID });
-    return currentUser ? currentUser.presenter : false;
-  }
-
-  // if a pod is not default, then we check whether this user owns a current pod
-  const selector = {
-    meetingId: Auth.meetingID,
-    podId,
-  };
-  const pod = PresentationPods.findOne(selector);
-  return pod.currentPresenterId === Auth.userID;
+const isPresenter = () => {
+  const currentUser = Users.findOne({ userId: Auth.userID });
+  return currentUser ? currentUser.presenter : false;
 };
 
-const getMultiUserStatus = (whiteboardId) => {
-  const data = WhiteboardMultiUser.findOne({ meetingId: Auth.meetingID, whiteboardId });
+const getMultiUserStatus = () => {
+  const data = WhiteboardMultiUser.findOne({ meetingId: Auth.meetingID });
   return data ? data.multiUser : false;
 };
 

@@ -12,7 +12,6 @@ const proccess = () => {
     return;
   }
   cursorRecieverIsRunning = true;
-  
   Object.keys(cursorQueue).forEach(meetingId => {
     CursorStreamer.emit('message', { meetingId, cursors: cursorQueue[meetingId] });
   });
@@ -22,16 +21,18 @@ const proccess = () => {
 };
 
 export default function handleCursorUpdate({ header, body }, meetingId) {
-  const { userId } = header;
-  check(body, Object);
+  const userId = header.userId;
+  const x = body.xPercent;
+  const y = body.yPercent;
 
-  check(meetingId, String);
   check(userId, String);
+  check(x, Number);
+  check(y, Number);
 
   if(!cursorQueue.hasOwnProperty(meetingId)) {
     cursorQueue[meetingId] = {};
   }
   // overwrite since we dont care about the other positions
-  cursorQueue[meetingId][userId] = body;
+  cursorQueue[meetingId][userId] = { x, y };
   if (!cursorRecieverIsRunning) proccess();
 }

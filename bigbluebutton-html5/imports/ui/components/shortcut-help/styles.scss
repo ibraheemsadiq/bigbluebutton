@@ -1,10 +1,7 @@
 @import "/imports/ui/stylesheets/variables/_all";
 
-.shortcutTable,
-.keyCell,
-.descCell,
-.tableTitle {
-  border: var(--border-size) solid var(--color-gray-lighter);
+.shortcutTable, .keyCell, .descCell, .tableTitle {
+  border: $border-size solid $color-gray-lighter;
 }
 
 .keyCell {
@@ -12,12 +9,11 @@
 }
 
 .descCell {
-  padding-right: var(--jumbo-padding-x) !important;
+  padding-right: $jumbo-padding-x !important;
 }
 
-.keyCell,
-.descCell {
-  padding: var(--sm-padding-x);
+.keyCell, .descCell {
+  padding: $sm-padding-x;
   margin: auto;
 }
 
@@ -27,5 +23,5 @@
 }
 
 .tableTitle {
-  padding: var(--sm-padding-x);
+  padding: $sm-padding-x;
 }

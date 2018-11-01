@@ -24,7 +24,6 @@ const propTypes = {
   toggleVoice: PropTypes.func.isRequired,
   changeRole: PropTypes.func.isRequired,
   roving: PropTypes.func.isRequired,
-  getGroupChatPrivate: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -58,7 +57,6 @@ class UserContent extends React.PureComponent {
       getEmoji,
       isPublicChat,
       openChats,
-      getGroupChatPrivate,
     } = this.props;
 
     return (
@@ -96,7 +94,6 @@ class UserContent extends React.PureComponent {
             handleEmojiChange,
             getEmojiList,
             getEmoji,
-            getGroupChatPrivate,
           }}
         />
       </div>

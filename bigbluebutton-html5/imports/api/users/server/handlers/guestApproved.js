@@ -5,25 +5,30 @@ import userJoin from '../methods/userJoin';
 
 export default function handleGuestsWaitingForApproval({ header, body }, meetingId) {
   const { userId } = header;
-  const { status, approvedBy } = body;
+  const { guests, approvedBy } = body;
 
   check(userId, String);
   check(meetingId, String);
-  check(status, String);
   check(approvedBy, String);
 
-  const selector = {
-    meetingId,
-    userId,
-  };
+  return guests.forEach((item) => {
+    const { guest, approved } = item;
 
-  const User = Users.findOne(selector);
+    check(approved, Boolean);
+    check(guest, String);
 
-  const GUEST_STATUS_ALLOW = 'ALLOW';
-  const approved = GUEST_STATUS_ALLOW === status;
-  if (User && approved) {
-    userJoin(meetingId, userId, User.authToken);
-  }
+    const selector = {
+      meetingId,
+      userId: guest,
+      clientType: 'HTML5',
+    };
 
-  return setApprovedStatus(meetingId, userId, approved, approvedBy);
+    const User = Users.findOne(selector);
+
+    if (User && approved) {
+      userJoin(meetingId, guest, User.authToken);
+    }
+
+    setApprovedStatus(meetingId, guest, approved, approvedBy);
+  });
 }

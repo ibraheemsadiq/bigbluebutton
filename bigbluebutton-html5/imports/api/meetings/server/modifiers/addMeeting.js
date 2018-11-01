@@ -33,9 +33,6 @@ export default function addMeeting(meeting) {
       warnMinutesBeforeMax: Number,
       meetingExpireIfNoUserJoinedInMinutes: Number,
       meetingExpireWhenLastUserLeftInMinutes: Number,
-      userInactivityInspectTimerInMinutes: Number,
-      userInactivityThresholdInMinutes: Number,
-      userActivitySignResponseDelayInMinutes: Number,
     },
     welcomeProp: {
       welcomeMsg: String,
