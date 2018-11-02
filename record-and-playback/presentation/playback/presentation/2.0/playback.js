@@ -18,7 +18,7 @@
 */
 
 const defaultCopyright = '<p>Recorded with <a target="_blank" href="https://mytutor.plus">My Tutor</a></p><p>Use <a target="_blank" href="http://mozilla.org/firefox">Mozilla Firefox</a> or <a target="_blank" href="http://google.com/chrome/">Google Chrome</a> to play this recording.</p>';
-const defaultLogo = 'logo.png';
+const defaultLogo = 'https://mytutor.plus/client/1336515903_ab550f78-87eb-420c-a2b8-0ec7ac46188f.png';
 
 // Playback events
 var dataReady = false;
