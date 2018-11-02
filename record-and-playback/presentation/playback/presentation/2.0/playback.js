@@ -615,6 +615,7 @@ function loadBranding() {
 
 function loadLogo(logo) {
   let logoURL = typeof logo !== 'undefined' ? logo : defaultLogo;
+  console.log(logoURL)
   logger.info("==Loaded logo from", logoURL);
   $("#slide").css('background-image', 'url(' + logoURL + ')');
   document.getElementById("load-img").src = logoURL;
