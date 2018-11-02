@@ -73,6 +73,7 @@ const intlMessages = defineMessages({
     id: 'app.navBar.settingsDropdown.hotkeysDesc',
     description: 'Describes hotkeys option',
   }
+
 });
 
 const SHORTCUTS_CONFIG = Meteor.settings.public.app.shortcuts;
@@ -115,14 +116,6 @@ class SettingsDropdown extends Component {
         label={intl.formatMessage(intlMessages.aboutLabel)}
         description={intl.formatMessage(intlMessages.aboutDesc)}
         onClick={() => mountModal(<AboutContainer />)}
-      />),
-      !helpButton ? null :
-      (<DropdownListItem
-        key={_.uniqueId('list-item-')}
-        icon="help"
-        label={intl.formatMessage(intlMessages.helpLabel)}
-        description={intl.formatMessage(intlMessages.helpDesc)}
-        onClick={() => window.open('https://bigbluebutton.org/videos/')}
       />),
       (<DropdownListItem
         key={_.uniqueId('list-item-')}
