@@ -72,15 +72,7 @@ const intlMessages = defineMessages({
   hotkeysDesc: {
     id: 'app.navBar.settingsDropdown.hotkeysDesc',
     description: 'Describes hotkeys option',
-  },
-  helpLabel: {
-    id: 'app.navBar.settingsDropdown.helpLabel',
-    description: 'Help options label',
-  },
-  helpDesc: {
-    id: 'app.navBar.settingsDropdown.helpDesc',
-    description: 'Describes help option',
-  },
+  }
 });
 
 const SHORTCUTS_CONFIG = Meteor.settings.public.app.shortcuts;
