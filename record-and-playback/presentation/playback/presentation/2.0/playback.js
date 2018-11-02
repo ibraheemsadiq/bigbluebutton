@@ -609,6 +609,7 @@ function loadBranding() {
     }
   }
 
+  console.log(logo)
   loadLogo(logo);
   loadCopyright(copyright);
 };
