@@ -19,7 +19,7 @@ redis_port: 6379
 log_dir: /var/log/bigbluebutton
 recording_dir: /var/bigbluebutton/recording
 published_dir: /var/bigbluebutton/published
-playback_host: 10.0.3.203
+playback_host: 13.228.202.134
 
 # For DEVELOPMENT
 # This allows us to run the scripts manually
