@@ -15,8 +15,8 @@ redis_port: 6379
 log_dir: /var/log/bigbluebutton
 recording_dir: /var/bigbluebutton/recording
 published_dir: /var/bigbluebutton/published
-playback_host: 10.0.3.203
-playback_protocol: http
+playback_host: mytutor.plus
+playback_protocol: https
 
 # For DEVELOPMENT
 # This allows us to run the scripts manually
