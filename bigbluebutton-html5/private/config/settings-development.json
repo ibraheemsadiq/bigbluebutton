@@ -224,16 +224,16 @@
       "toolbar": {
         "colors": [
           {
+            "label": "red",
+            "value": "#ff0000"
+          },
+          {
             "label": "black",
             "value": "#000000"
           },
           {
             "label": "white",
             "value": "#ffffff"
-          },
-          {
-            "label": "red",
-            "value": "#ff0000"
           },
           {
             "label": "orange",
