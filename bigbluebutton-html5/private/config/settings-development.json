@@ -86,7 +86,7 @@
           "max": 480
         }
       },
-      "enableScreensharing": true,
+      "enableScreensharing": false,
       "enableVideo": true,
       "enableVideoStats": false,
       "enableListenOnly": false
