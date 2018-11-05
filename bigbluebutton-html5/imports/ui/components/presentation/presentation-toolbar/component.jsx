@@ -160,6 +160,8 @@ class PresentationToolbar extends Component {
     return optionList;
   }
 
+
+
   render() {
     const {
       currentSlideNum,
