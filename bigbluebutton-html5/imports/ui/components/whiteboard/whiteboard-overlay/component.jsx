@@ -168,6 +168,17 @@ export default class WhiteboardOverlay extends Component {
           physicalSlideHeight={this.props.physicalSlideHeight}
         />
       );
+    }else if (tool === 'pencil') {
+      return (
+        <PencilDrawListener
+          userId={userId}
+          whiteboardId={whiteboardId}
+          drawSettings={drawSettings}
+          actions={actions}
+          physicalSlideWidth={this.props.physicalSlideWidth}
+          physicalSlideHeight={this.props.physicalSlideHeight}
+        />
+      );
     } else if (tool === 'text') {
       return (
         <TextDrawListener
