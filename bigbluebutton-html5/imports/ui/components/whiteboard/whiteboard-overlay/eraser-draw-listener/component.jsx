@@ -164,15 +164,15 @@ export default class PencilDrawListener extends Component {
     const annotation = {
       id,
       status,
-      annotationType: 'pencil',
+      annotationType: 'eraser',
       annotationInfo: {
-        color: ' #FFF',
+        color: '#FFF',
         thickness: normalizeThickness(this.props.drawSettings.thickness),
         points,
         id,
         whiteboardId,
         status,
-        type: 'pencil',
+        type: 'eraser',
       },
       wbId: whiteboardId,
       userId,
@@ -230,7 +230,7 @@ export default class PencilDrawListener extends Component {
       height: '100%',
       touchAction: 'none',
       zIndex: 2 ** 31 - 1, // maximun value of z-index to prevent other things from overlapping
-      cursor: `url('${baseName}/resources/images/whiteboard-cursor/pencil.png') 2 22, default`,
+      cursor: `url('${baseName}/resources/images/whiteboard-cursor/eraser.png') 2 22, default`,
     };
     const { contextMenuHandler } = this.props.actions;
     return (
