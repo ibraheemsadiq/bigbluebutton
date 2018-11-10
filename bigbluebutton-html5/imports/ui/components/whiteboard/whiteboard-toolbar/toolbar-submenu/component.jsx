@@ -11,6 +11,10 @@ const intlMessages = defineMessages({
     id: 'app.whiteboard.toolbar.tools.pointer',
     description: 'Tool submenu pointer item',
   },
+  toolEraser: {
+    id: 'app.whiteboard.toolbar.tools.eraser',
+    description: 'Tool submenu eraser annotation',
+  },
   toolPencil: {
     id: 'app.whiteboard.toolbar.tools.pencil',
     description: 'Tool submenu pencil annotation',

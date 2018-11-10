@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import ShapeDrawListener from './shape-draw-listener/component';
 import TextDrawListener from './text-draw-listener/component';
 import PencilDrawListener from './pencil-draw-listener/component';
+import EraserDrawListener from './pencil-draw-listener/component';
 import PanZoomDrawListener from './pan-zoom-draw-listener/component';
 
 export default class WhiteboardOverlay extends Component {
@@ -168,9 +169,9 @@ export default class WhiteboardOverlay extends Component {
           physicalSlideHeight={this.props.physicalSlideHeight}
         />
       );
-    }else if (tool === 'pencil') {
+    }else if (tool === 'eraser') {
       return (
-        <PencilDrawListener
+        <EraserDrawListener
           userId={userId}
           whiteboardId={whiteboardId}
           drawSettings={drawSettings}
