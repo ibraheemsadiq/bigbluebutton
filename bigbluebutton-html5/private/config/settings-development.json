@@ -328,8 +328,8 @@
             "value": "text"
           },
           {
-            "icon": "line_tool",
-            "value": "line"
+            "icon": "eraser",
+            "value": "pencil"
           },
           {
             "icon": "circle_tool",
