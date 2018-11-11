@@ -167,7 +167,7 @@ export default class PencilDrawListener extends Component {
       annotationType: 'pencil',
       annotationInfo: {
         color: "#FFF",
-        thickness: normalizeThickness(this.props.drawSettings.thickness),
+        thickness: 10,
         points,
         id,
         whiteboardId,
