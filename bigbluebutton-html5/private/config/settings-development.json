@@ -37,7 +37,7 @@
           "enabled": false,
           "fontFamily": "Calibri",
           "fontSize": "16px",
-          "takeOwnership": true
+          "takeOwnership": false
         },
         "participants": {
           "muteAll": false,
@@ -86,9 +86,9 @@
           "max": 480
         }
       },
-      "enableScreensharing": true,
+      "enableScreensharing": false,
       "enableVideo": true,
-      "enableVideoStats": true,
+      "enableVideoStats": false,
       "enableListenOnly": false
     },
 
@@ -325,11 +325,7 @@
           },
           {
             "icon": "line_tool",
-            "value": "text"
-          },
-          {
-            "icon": "eraser",
-            "value": "pencil"
+            "value": "line"
           },
           {
             "icon": "circle_tool",
