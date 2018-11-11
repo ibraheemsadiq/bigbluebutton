@@ -328,10 +328,6 @@
             "value": "text"
           },
           {
-            "icon": "eraser",
-            "value": "eraser"
-          },
-          {
             "icon": "circle_tool",
             "value": "ellipse"
           },
@@ -346,6 +342,10 @@
           {
             "icon": "pen_tool",
             "value": "pencil"
+          },
+          {
+            "icon": "eraser",
+            "value": "eraser"
           },
           {
             "icon": "pointer",

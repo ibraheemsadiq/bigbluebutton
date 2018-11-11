@@ -275,8 +275,8 @@ PencilDrawListener.propTypes = {
   }).isRequired,
   drawSettings: PropTypes.shape({
     // Annotation color
-    color: PropTypes.number.isRequired,
+    color: 2,
     // Annotation thickness (not normalized)
-    thickness: PropTypes.number.isRequired,
+    thickness: 3,
   }).isRequired,
 };
