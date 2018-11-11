@@ -77,11 +77,11 @@ class WhiteboardToolbar extends Component {
         value: 'pencil',
       },
       thicknessSelected: { value: 4 },
-      colorSelected: { value: '#000000' },
+      colorSelected: { value: '#FFF' },
       fontSizeSelected: { value: 20 },
 
       // keeping the previous color and the thickness icon's radius selected for svg animation
-      prevColorSelected: { value: '#000000' },
+      prevColorSelected: { value: '#FFF' },
       prevThicknessSelected: { value: 4 },
 
       // lists of tools/thickness/colors are not direct children of main toolbar buttons
