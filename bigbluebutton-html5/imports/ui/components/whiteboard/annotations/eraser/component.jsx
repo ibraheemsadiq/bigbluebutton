@@ -144,9 +144,9 @@ export default class EraserDrawComponent extends Component {
         stroke={AnnotationHelpers.getFormattedColor(annotation.color)}
         d={this.getCurrentPath()}
         strokeWidth={AnnotationHelpers.getStrokeWidth(annotation.thickness, slideWidth)}
-        strokeLinejoin="square"
-        strokeLinecap="square"
-        style={{ WebkitTapHighlightColor: 'rgba(255, 255, 255, 1)' }}
+        strokeLinejoin="round"
+        strokeLinecap="round"
+        style={{ WebkitTapHighlightColor: 'rgba(0, 0, 0, 0)' }}
       />
     );
   }
@@ -158,7 +158,7 @@ EraserDrawComponent.propTypes = {
   // Defines an annotation object, which contains all the basic info we need to draw with a pencil
   annotation: PropTypes.shape({
     points: PropTypes.arrayOf(PropTypes.number).isRequired,
-    color: 4,
+    color: PropTypes.number.isRequired,
     thickness: PropTypes.number.isRequired,
   }).isRequired,
   // Defines the width of the slide (svg coordinate system), which needed in calculations
