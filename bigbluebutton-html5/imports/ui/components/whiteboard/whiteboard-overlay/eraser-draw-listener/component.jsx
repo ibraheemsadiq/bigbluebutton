@@ -57,7 +57,7 @@ export default class EraserDrawComponent extends Component {
 
     // sending the first message
     const _points = [transformedSvgPoint.x, transformedSvgPoint.y];
-    this.handleDrawPencil(_points, DRAW_START, generateNewShapeId());
+    this.handleDrawEraser(_points, DRAW_START, generateNewShapeId());
   }
 
   commonDrawMoveHandler(clientX, clientY) {
@@ -152,12 +152,12 @@ export default class EraserDrawComponent extends Component {
   sendCoordinates() {
     if (this.isDrawing && this.points.length > 0) {
       const { getCurrentShapeId } = this.props.actions;
-      this.handleDrawPencil(this.points, DRAW_UPDATE, getCurrentShapeId());
+      this.handleDrawEraser(this.points, DRAW_UPDATE, getCurrentShapeId());
       this.points = [];
     }
   }
 
-  handleDrawPencil(points, status, id, dimensions) {
+  handleDrawEraser(points, status, id, dimensions) {
     const { normalizeThickness, sendAnnotation } = this.props.actions;
     const { whiteboardId, userId } = this.props;
 
@@ -192,7 +192,7 @@ export default class EraserDrawComponent extends Component {
       const { getCurrentShapeId } = this.props.actions;
       const { physicalSlideWidth, physicalSlideHeight } = this.props;
 
-      this.handleDrawPencil(
+      this.handleDrawEraser(
         this.points,
         DRAW_END,
         getCurrentShapeId(),
@@ -225,7 +225,7 @@ export default class EraserDrawComponent extends Component {
 
   render() {
     const baseName = Meteor.settings.public.app.basename;
-    const pencilDrawStyle = {
+    const EraserDrawStyle = {
       width: '100%',
       height: '100%',
       touchAction: 'none',
@@ -237,7 +237,7 @@ export default class EraserDrawComponent extends Component {
       <div
         onTouchStart={this.handleTouchStart}
         role="presentation"
-        style={pencilDrawStyle}
+        style={EraserDrawStyle}
         onMouseDown={this.mouseDownHandler}
         onContextMenu={contextMenuHandler}
       />
