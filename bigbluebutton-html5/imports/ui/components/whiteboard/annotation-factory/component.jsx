@@ -94,8 +94,8 @@ AnnotationFactory.defaultProps = {
     poll_result: Poll,
     rectangle: Rectangle,
     text: Text,
+    eraser: Eraser,
     triangle: Triangle,
     pencil: Pencil,
-      eraser: Eraser
   },
 };

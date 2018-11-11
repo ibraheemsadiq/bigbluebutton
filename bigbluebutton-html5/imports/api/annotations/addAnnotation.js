@@ -141,7 +141,9 @@ export default function addAnnotation(meetingId, whiteboardId, userId, annotatio
   check(whiteboardId, String);
   check(annotation, Object);
 
-  switch (annotation.annotationType) {
+    console.log(annotationType);
+
+    switch (annotation.annotationType) {
     case ANNOTATION_TYPE_TEXT:
       return handleTextUpdate(meetingId, whiteboardId, userId, annotation);
     case ANNOTATION_TYPE_PENCIL:
