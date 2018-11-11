@@ -9,6 +9,7 @@ import Rectangle from '../annotations/rectangle/component';
 import Text from '../annotations/text/container';
 import Triangle from '../annotations/triangle/component';
 import Pencil from '../annotations/pencil/component';
+import Eraser from '../annotations/eraser/component';
 
 const ANNOTATION_CONFIG = Meteor.settings.public.whiteboard.annotations;
 const DRAW_END = ANNOTATION_CONFIG.status.end;
@@ -95,5 +96,6 @@ AnnotationFactory.defaultProps = {
     text: Text,
     triangle: Triangle,
     pencil: Pencil,
+      eraser: Eraser
   },
 };
