@@ -167,7 +167,7 @@ export default class PencilDrawListener extends Component {
       annotationType: 'pencil',
       annotationInfo: {
         color: "#FFF",
-        thickness: 6,
+        thickness: 4,
         points,
         id,
         whiteboardId,

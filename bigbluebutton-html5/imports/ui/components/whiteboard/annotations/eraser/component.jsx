@@ -144,9 +144,9 @@ export default class EraserDrawComponent extends Component {
         stroke={AnnotationHelpers.getFormattedColor(annotation.color)}
         d={this.getCurrentPath()}
         strokeWidth={AnnotationHelpers.getStrokeWidth(annotation.thickness, slideWidth)}
-        strokeLinejoin="round"
-        strokeLinecap="round"
-        style={{ WebkitTapHighlightColor: 'rgba(0, 0, 0, 0)' }}
+        strokeLinejoin="square"
+        strokeLinecap="square"
+        style={{ WebkitTapHighlightColor: 'rgba(255, 255, 255, 1)' }}
       />
     );
   }
