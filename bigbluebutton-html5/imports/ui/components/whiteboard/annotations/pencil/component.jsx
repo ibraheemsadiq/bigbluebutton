@@ -141,12 +141,12 @@ export default class PencilDrawComponent extends Component {
     return (
       <path
         fill="none"
-        stroke={AnnotationHelpers.getFormattedColor(annotation.color)}
+        stroke="#FFF"
         d={this.getCurrentPath()}
         strokeWidth={AnnotationHelpers.getStrokeWidth(annotation.thickness, slideWidth)}
         strokeLinejoin="round"
         strokeLinecap="round"
-        style={{ WebkitTapHighlightColor: 'rgba(0, 0, 0, 0)' }}
+        style={{ WebkitTapHighlightColor: 'rgba(255, 255, 255, 1)' }}
       />
     );
   }
