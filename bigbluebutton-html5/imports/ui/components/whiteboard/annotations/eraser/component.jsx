@@ -158,7 +158,7 @@ EraserDrawComponent.propTypes = {
   // Defines an annotation object, which contains all the basic info we need to draw with a pencil
   annotation: PropTypes.shape({
     points: PropTypes.arrayOf(PropTypes.number).isRequired,
-    color: PropTypes.number.isRequired,
+    color: 2,
     thickness: PropTypes.number.isRequired,
   }).isRequired,
   // Defines the width of the slide (svg coordinate system), which needed in calculations

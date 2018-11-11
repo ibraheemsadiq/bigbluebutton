@@ -166,7 +166,7 @@ export default class EraserDrawComponent extends Component {
       status,
       annotationType: 'eraser',
       annotationInfo: {
-        color: "#FFF",
+        color: 2,
         thickness: 2,
         points,
         id,
