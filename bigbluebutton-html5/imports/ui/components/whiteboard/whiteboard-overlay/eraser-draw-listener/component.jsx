@@ -166,7 +166,7 @@ export default class EraserDrawComponent extends Component {
       status,
       annotationType: 'pencil',
       annotationInfo: {
-        color: 2,
+        color: 3,
         thickness: 2,
         points,
         id,
@@ -230,7 +230,7 @@ export default class EraserDrawComponent extends Component {
       height: '100%',
       touchAction: 'none',
       zIndex: 2 ** 31 - 1, // maximun value of z-index to prevent other things from overlapping
-      cursor: `url('${baseName}/resources/images/whiteboard-cursor/eraser.png') 2 22, default`,
+      cursor: `url('${baseName}/resources/images/whiteboard-cursor/eraser.png') 3 22, default`,
     };
     const { contextMenuHandler } = this.props.actions;
     return (
