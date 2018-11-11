@@ -155,7 +155,7 @@ export default class EraserDrawComponent extends Component {
 EraserDrawComponent.propTypes = {
   // Defines a version of the shape, so that we know if we need to update the component or not
   version: PropTypes.number.isRequired,
-  // Defines an annotation object, which contains all the basic info we need to draw with a pencil
+  // Defines an annotation object, which contains all the basic info we need to draw with a eraser
   annotation: PropTypes.shape({
     points: PropTypes.arrayOf(PropTypes.number).isRequired,
     color: 3,
