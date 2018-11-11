@@ -172,7 +172,7 @@ export default class EraserDrawComponent extends Component {
         id,
         whiteboardId,
         status,
-        type: 'eraser',
+        type: 'pencil',
       },
       wbId: whiteboardId,
       userId,
