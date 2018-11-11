@@ -365,7 +365,8 @@
 
     "app": {
       "captionsChunkLength": 1000,
-      "pencilChunkLength": 100
+      "pencilChunkLength": 100,
+      "eraserChunkLength": 100
     },
 
     "redis": {
