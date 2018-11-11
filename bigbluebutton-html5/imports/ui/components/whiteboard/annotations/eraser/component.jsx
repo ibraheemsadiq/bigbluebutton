@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import AnnotationHelpers from '../helpers';
 
-export default class PencilDrawComponent extends Component {
+export default class EraserDrawComponent extends Component {
   static getInitialCoordinates(annotation, slideWidth, slideHeight) {
     const { points } = annotation;
     let i = 2;
@@ -104,10 +104,10 @@ export default class PencilDrawComponent extends Component {
     let data;
     // Final message, display smoothes coordinates
     if (annotation.status === 'DRAW_END') {
-      data = PencilDrawComponent.getFinalCoordinates(annotation, slideWidth, slideHeight);
+      data = EraserDrawComponent.getFinalCoordinates(annotation, slideWidth, slideHeight);
     // Not a final message, but rendering it for the first time, creating a new path
     } else if (!this.path) {
-      data = PencilDrawComponent.getInitialCoordinates(annotation, slideWidth, slideHeight);
+      data = EraserDrawComponent.getInitialCoordinates(annotation, slideWidth, slideHeight);
     // If it's not the first 2 cases - means we just got an update, updating the coordinates
     } else {
       data = this.updateCoordinates(annotation, slideWidth, slideHeight);
@@ -152,7 +152,7 @@ export default class PencilDrawComponent extends Component {
   }
 }
 
-PencilDrawComponent.propTypes = {
+EraserDrawComponent.propTypes = {
   // Defines a version of the shape, so that we know if we need to update the component or not
   version: PropTypes.number.isRequired,
   // Defines an annotation object, which contains all the basic info we need to draw with a pencil
