@@ -146,7 +146,7 @@ export default class PencilDrawComponent extends Component {
         strokeWidth={AnnotationHelpers.getStrokeWidth(annotation.thickness, slideWidth)}
         strokeLinejoin="round"
         strokeLinecap="round"
-        style={{ WebkitTapHighlightColor: 'rgba(0, 0, 0, 0)' }}
+        style={{ WebkitTapHighlightColor: 'rgba(255, 255, 255, 1)' }}
       />
     );
   }
