@@ -6,7 +6,7 @@ const DRAW_START = ANNOTATION_CONFIG.status.start;
 const DRAW_UPDATE = ANNOTATION_CONFIG.status.update;
 const DRAW_END = ANNOTATION_CONFIG.status.end;
 
-export default class PencilDrawListener extends Component {
+export default class EraserDrawComponent extends Component {
   constructor() {
     super();
 
@@ -164,7 +164,7 @@ export default class PencilDrawListener extends Component {
     const annotation = {
       id,
       status,
-      annotationType: 'pencil',
+      annotationType: 'eraser',
       annotationInfo: {
         color: "#FFF",
         thickness: 2,
@@ -172,7 +172,7 @@ export default class PencilDrawListener extends Component {
         id,
         whiteboardId,
         status,
-        type: 'pencil',
+        type: 'eraser',
       },
       wbId: whiteboardId,
       userId,
@@ -245,7 +245,7 @@ export default class PencilDrawListener extends Component {
   }
 }
 
-PencilDrawListener.propTypes = {
+EraserDrawComponent.propTypes = {
   // Defines a whiteboard id, which needed to publish an annotation message
   whiteboardId: PropTypes.string.isRequired,
   // Defines a user id, which needed to publish an annotation message
