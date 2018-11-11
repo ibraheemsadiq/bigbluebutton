@@ -164,7 +164,7 @@ export default class PencilDrawListener extends Component {
     const annotation = {
       id,
       status,
-      annotationType: 'eraser',
+      annotationType: 'pencil',
       annotationInfo: {
         color: "#FFF",
         thickness: 2,
@@ -172,7 +172,7 @@ export default class PencilDrawListener extends Component {
         id,
         whiteboardId,
         status,
-        type: 'eraser',
+        type: 'pencil',
       },
       wbId: whiteboardId,
       userId,
