@@ -141,7 +141,7 @@ export default class EraserDrawComponent extends Component {
     return (
       <path
         fill="none"
-        stroke='#FFF'
+        stroke={AnnotationHelpers.getFormattedColor(annotation.color)}
         d={this.getCurrentPath()}
         strokeWidth={AnnotationHelpers.getStrokeWidth(annotation.thickness, slideWidth)}
         strokeLinejoin="round"
