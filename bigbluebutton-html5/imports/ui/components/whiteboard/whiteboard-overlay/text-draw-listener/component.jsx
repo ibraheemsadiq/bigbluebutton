@@ -373,6 +373,8 @@ export default class TextDrawListener extends Component {
       position: 0,
     };
 
+    console.log('anotaer is');
+    console.log(annotation);
     sendAnnotation(annotation);
   }
 

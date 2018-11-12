@@ -167,8 +167,8 @@ export default class EraserDrawComponent extends Component {
       status,
       annotationType: 'eraser',
       annotationInfo: {
-        color: 3,
-        thickness: 2,
+          color: this.props.drawSettings.color,
+          thickness: normalizeThickness(this.props.drawSettings.thickness),
         points,
         id,
         whiteboardId,
@@ -280,7 +280,7 @@ EraserDrawComponent.propTypes = {
   }).isRequired,
   drawSettings: PropTypes.shape({
     // Annotation color
-    color: 3,
+      color: PropTypes.number.isRequired,
     // Annotation thickness (not normalized)
     thickness: 10,
   }).isRequired,
