@@ -168,7 +168,7 @@ export default class EraserDrawComponent extends Component {
       annotationType: 'pencil',
       annotationInfo: {
           color: '16777215',
-          thickness: normalizeThickness(this.props.drawSettings.thickness),
+          thickness: 4,
         points,
         id,
         whiteboardId,
