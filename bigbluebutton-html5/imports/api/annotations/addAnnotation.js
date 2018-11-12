@@ -147,7 +147,7 @@ export default function addAnnotation(meetingId, whiteboardId, userId, annotatio
     switch (annotation.annotationType) {
     case ANNOTATION_TYPE_TEXT:
       return handleTextUpdate(meetingId, whiteboardId, userId, annotation);
-    case ANNOTATION_TYPE_PENCIL || ANNOTATION_TYPE_ERASER:
+    case (ANNOTATION_TYPE_PENCIL || ANNOTATION_TYPE_ERASER):
       return handlePencilUpdate(meetingId, whiteboardId, userId, annotation);
     default:
       return handleCommonAnnotation(meetingId, whiteboardId, userId, annotation);
