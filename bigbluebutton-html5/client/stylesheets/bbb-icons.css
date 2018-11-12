@@ -69,7 +69,7 @@
   content: "\e920";
 }
 .icon-bbb-eraser:before {
-  content: "\ea920";
+  background: url("https://maps.gstatic.com/favicon3.ico") no-repeat scroll right center rgba(0, 0, 0, 0);
 }
 .icon-bbb-plus:before {
   content: "\e921";
