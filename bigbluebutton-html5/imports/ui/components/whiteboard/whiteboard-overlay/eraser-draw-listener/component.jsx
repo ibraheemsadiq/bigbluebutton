@@ -161,6 +161,7 @@ export default class EraserDrawComponent extends Component {
     const { normalizeThickness, sendAnnotation } = this.props.actions;
     const { whiteboardId, userId } = this.props;
 
+
     const annotation = {
       id,
       status,
@@ -178,6 +179,10 @@ export default class EraserDrawComponent extends Component {
       userId,
       position: 0,
     };
+
+    console.log('annotation is');
+    console.log(annotation);
+
 
       // dimensions are added to the 'DRAW_END', last message
     if (dimensions) {
