@@ -70,7 +70,8 @@
 }
 .icon-bbb-eraser:before {
   background: url("https://maps.gstatic.com/favicon3.ico") no-repeat scroll right center rgba(0, 0, 0, 0);
-}
+  padding-right: 20px;
+  background-size: 15px 15px;}
 .icon-bbb-plus:before {
   content: "\e921";
 }
