@@ -165,7 +165,7 @@ export default class EraserDrawComponent extends Component {
     const annotation = {
       id,
       status,
-      annotationType: 'pencil',
+      annotationType: 'eraser',
       annotationInfo: {
           color: '16777215',
           thickness: normalizeThickness(this.props.drawSettings.thickness),
