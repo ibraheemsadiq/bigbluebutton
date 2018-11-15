@@ -8,6 +8,7 @@ export default function clearAnnotations(meetingId, whiteboardId, userId) {
     selector.meetingId = meetingId;
   }
 
+
   if (whiteboardId) {
     selector.whiteboardId = whiteboardId;
   }
