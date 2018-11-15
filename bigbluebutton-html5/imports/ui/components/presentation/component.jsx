@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import WhiteboardOverlayContainer from '/imports/ui/components/whiteboard/whiteboard-overlay/container';
 import WhiteboardToolbarContainer from '/imports/ui/components/whiteboard/whiteboard-toolbar/container';
-import CursorWrapperContainer from '/imports/ui/components/cursor/presentation-overlay/container';
 import AnnotationGroupContainer from '/imports/ui/components/whiteboard/annotation-group/container';
 import PresentationToolbarContainer from '/imports/ui/components/presentation/presentation-toolbar/container';
 import PresentationOverlayContainer from '/imports/ui/components/presentation/presentation-overlay/container';
@@ -239,15 +238,7 @@ export default class PresentationArea extends Component {
                                     height={height}
                                     whiteboardId={slideObj.id}
                                 />
-                                <CursorWrapperContainer
-                                    podId={this.props.podId}
-                                    whiteboardId={slideObj.id}
-                                    widthRatio={slideObj.widthRatio}
-                                    physicalWidthRatio={adjustedSizes.width / width}
-                                    slideWidth={width}
-                                    slideHeight={height}
-                                    radius={this.state.fitToWidth ? 2 : 5}
-                                />
+
                             </g>
                             {this.renderOverlays(slideObj, adjustedSizes)}
                         </svg>
