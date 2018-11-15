@@ -1,83 +1,65 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withTracker } from 'meteor/react-meteor-data';
-import PresentationService from '/imports/ui/components/presentation/service';
 import PresentationToolbarService from './service';
 import PresentationToolbar from './component';
 
-
 const PresentationToolbarContainer = (props) => {
-    const {
-        currentSlideNum,
-        userIsPresenter,
-        numberOfSlides,
-        actions,
-        zoom,
-        zoomChanger,
-        fitToWidthHandler,
-    } = props;
+  const {
+    currentSlideNum,
+    userIsPresenter,
+    numberOfSlides,
+    actions,
+  } = props;
 
-    if (userIsPresenter) {
-        // Only show controls if user is presenter
-        return (
-            <PresentationToolbar
-                {...{
-                    currentSlideNum,
-                    numberOfSlides,
-                    actions,
-                    zoom,
-                    zoomChanger,
-                    fitToWidthHandler,
-                }}
-            />
-        );
-    }
-    return null;
+  if (userIsPresenter) {
+    // Only show controls if user is presenter
+    return (
+      <PresentationToolbar
+        currentSlideNum={currentSlideNum}
+        numberOfSlides={numberOfSlides}
+        actions={actions}
+      />
+    );
+  }
+  return null;
 };
 
-export default withTracker((params) => {
-    const { podId, presentationId } = params;
-    const data = PresentationToolbarService.getSlideData(podId, presentationId);
+export default withTracker(({ presentationId, userIsPresenter, currentSlideNum }) => {
+  const data = PresentationToolbarService.getSlideData(presentationId);
 
-    const {
-        numberOfSlides,
-    } = data;
+  const {
+    numberOfSlides,
+  } = data;
 
-    return {
-        fitToWidthHandler: params.fitToWidthHandler,
-        userIsPresenter: PresentationService.isPresenter(podId),
-        numberOfSlides,
-        zoom: params.zoom,
-        zoomChanger: params.zoomChanger,
-        actions: {
-            nextSlideHandler: () =>
-                PresentationToolbarService.nextSlide(params.currentSlideNum, numberOfSlides, podId),
-            previousSlideHandler: () =>
-                PresentationToolbarService.previousSlide(params.currentSlideNum, podId),
-            skipToSlideHandler: requestedSlideNum =>
-                PresentationToolbarService.skipToSlide(requestedSlideNum, podId),
-            zoomSlideHandler: value =>
-                PresentationToolbarService.zoomSlide(params.currentSlideNum, podId, value),
-        },
-    };
+  return {
+    userIsPresenter,
+    numberOfSlides,
+    actions: {
+      nextSlideHandler: () =>
+        PresentationToolbarService.nextSlide(currentSlideNum, numberOfSlides),
+      previousSlideHandler: () =>
+        PresentationToolbarService.previousSlide(currentSlideNum, numberOfSlides),
+      skipToSlideHandler: event =>
+        PresentationToolbarService.skipToSlide(event),
+    },
+  };
 })(PresentationToolbarContainer);
 
 PresentationToolbarContainer.propTypes = {
-    // Number of current slide being displayed
-    currentSlideNum: PropTypes.number.isRequired,
-    zoom: PropTypes.number.isRequired,
-    zoomChanger: PropTypes.func.isRequired,
+  // Number of current slide being displayed
+  currentSlideNum: PropTypes.number.isRequired,
 
-    // Is the user a presenter
-    userIsPresenter: PropTypes.bool.isRequired,
+  // Is the user a presenter
+  userIsPresenter: PropTypes.bool.isRequired,
 
-    // Total number of slides in this presentation
-    numberOfSlides: PropTypes.number.isRequired,
+  // Total number of slides in this presentation
+  numberOfSlides: PropTypes.number.isRequired,
 
-    // Actions required for the presenter toolbar
-    actions: PropTypes.shape({
-        nextSlideHandler: PropTypes.func.isRequired,
-        previousSlideHandler: PropTypes.func.isRequired,
-        skipToSlideHandler: PropTypes.func.isRequired,
-    }).isRequired,
+  // Actions required for the presenter toolbar
+  actions: PropTypes.shape({
+    nextSlideHandler: PropTypes.func.isRequired,
+    previousSlideHandler: PropTypes.func.isRequired,
+    skipToSlideHandler: PropTypes.func.isRequired,
+  }).isRequired,
 };
