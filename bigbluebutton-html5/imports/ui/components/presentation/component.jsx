@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import WhiteboardOverlayContainer from '/imports/ui/components/whiteboard/whiteboard-overlay/container';
 import WhiteboardToolbarContainer from '/imports/ui/components/whiteboard/whiteboard-toolbar/container';
-import CursorWrapperContainer from '/imports/ui/components/cursor/cursor-wrapper-container/container';
+import CursorWrapperContainer from '/imports/ui/components/cursor/presentation-overlay/container';
 import AnnotationGroupContainer from '/imports/ui/components/whiteboard/annotation-group/container';
 import PresentationToolbarContainer from '/imports/ui/components/presentation/presentation-toolbar/container';
 import PresentationOverlayContainer from '/imports/ui/components/presentation/presentation-overlay/container';
